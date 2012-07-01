@@ -1,0 +1,19 @@
+{
+    "authors" : [
+        {
+            "name" : "Danny Berger",
+            "email" : "dpb587@gmail.com"
+        }
+    ],
+    "require" : {
+        "nikic/php-parser" : "dev-master",
+        "symfony/console" : "dev-master",
+        "symfony/process" : "dev-master",
+        "symfony/yaml" : "dev-master"
+    },
+    "autoload" : {
+        "psr-0" : {
+            "DPB\\DefDiff" : "src/"
+        }
+    }
+}

@@ -1,0 +1,46 @@
+{
+    "hash": "baad462b18b629ab67e7737c767cf1ce",
+    "packages": [
+        {
+            "package": "nikic/php-parser",
+            "version": "dev-master",
+            "source-reference": "4972124468f223c8508950569367ec3f0a208a61",
+            "commit-date": "1339172377"
+        },
+        {
+            "package": "symfony/console",
+            "version": "dev-master",
+            "source-reference": "808bf42b4b74c12e6c6a6a9750688035f1c49f9c",
+            "commit-date": "1340543161"
+        },
+        {
+            "package": "symfony/process",
+            "version": "dev-master",
+            "alias-pretty-version": "2.1.x-dev",
+            "alias-version": "2.1.9999999.9999999-dev"
+        },
+        {
+            "package": "symfony/process",
+            "version": "dev-master",
+            "source-reference": "v2.1.0-BETA1",
+            "commit-date": "1337882028"
+        },
+        {
+            "package": "symfony/yaml",
+            "version": "dev-master",
+            "source-reference": "v2.1.0-BETA1",
+            "commit-date": "1339592252"
+        }
+    ],
+    "packages-dev": null,
+    "aliases": [
+
+    ],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "nikic/php-parser": 20,
+        "symfony/console": 20,
+        "symfony/process": 20,
+        "symfony/yaml": 20
+    }
+}
