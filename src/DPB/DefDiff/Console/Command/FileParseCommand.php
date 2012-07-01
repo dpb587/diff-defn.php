@@ -2,14 +2,13 @@
 
 namespace DPB\DefDiff\Console\Command;
 
-use DPB\DefDiff\Definition\Definition;
+use DPB\DefDiff\Definition\RootDefinition;
 use DPB\DefDiff\Util\Processor;
+use DPB\DefDiff\Dumper\XmlDumper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Yaml\Yaml;
 
 class FileParseCommand extends Command
 {
@@ -24,7 +23,7 @@ class FileParseCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $scope = new Definition('.');
+        $scope = new RootDefinition('.');
 
         foreach ($input->getArgument('path') as $path) {
             if (is_dir($path)) {
@@ -45,7 +44,8 @@ class FileParseCommand extends Command
                 }
             }
         }
-    
-        $output->write(Yaml::dump($scope->dump(), 8));
+
+        $dumper = new XmlDumper();
+        $output->write($dumper->dump($scope));
     }
 }

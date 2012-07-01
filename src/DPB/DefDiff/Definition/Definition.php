@@ -2,7 +2,7 @@
 
 namespace DPB\DefDiff\Definition;
 
-class Definition
+class Definition implements \IteratorAggregate
 {
     private $defnId;
     private $defnParent;
@@ -43,6 +43,11 @@ class Definition
         return $this->attrs[$name];
     }
 
+    public function getAttributes()
+    {
+        return $this->attrs;
+    }
+
     public function assert($defn)
     {
         if (is_string($defn)) {
@@ -60,18 +65,8 @@ class Definition
         return $this->nodes[$id] = $defn;
     }
 
-    public function dump()
+    public function getIterator()
     {
-        $dump = array();
-
-        if (0 < count($this->attrs)) {
-            $dump['attr'] = $this->attrs;
-        }
-
-        foreach ($this->nodes as $node) {
-            $dump[$node->getDefnId()] = $node->dump();
-        }
-
-        return $dump;
+        return new \ArrayIterator($this->nodes);
     }
 }

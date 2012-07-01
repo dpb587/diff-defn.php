@@ -2,7 +2,7 @@
 
 namespace DPB\DefDiff\Scanner;
 
-use DPB\DefDiff\Definition\Definition;
+use DPB\DefDiff\Definition\ClassDefinition;
 
 class ClassScanner extends Scanner
 {
@@ -10,8 +10,7 @@ class ClassScanner extends Scanner
     {
         if ($node instanceof \PHPParser_Node_Stmt_Class) {
             $defn = $this->scope
-                ->assert('class')
-                ->assert(new Definition($node->namespacedName->toString()))
+                ->assert(new ClassDefinition($node->namespacedName->toString()))
             ;
 
             $defn->setAttribute('file', '/dev/null');

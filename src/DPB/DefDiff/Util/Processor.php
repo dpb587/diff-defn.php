@@ -14,7 +14,7 @@ class Processor
         $traverser->addVisitor(new \PHPParser_NodeVisitor_NameResolver());
         $traverser->addVisitor(new \DPB\DefDiff\Scanner\ClassScanner($scope));
         $traverser->addVisitor(new \DPB\DefDiff\Scanner\ClassMethodScanner($scope));
-        $traverser->addVisitor(new \DPB\DefDiff\Scanner\ClassMethodArgumentScanner($scope));
+        $traverser->addVisitor(new \DPB\DefDiff\Scanner\ClassMethodParamScanner($scope));
         $traverser->addVisitor(new \DPB\DefDiff\Scanner\ConstScanner($scope));
         $traverser->addVisitor(new \DPB\DefDiff\Scanner\FunctionScanner($scope));
 

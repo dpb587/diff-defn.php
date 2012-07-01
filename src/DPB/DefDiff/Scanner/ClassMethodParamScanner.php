@@ -2,9 +2,11 @@
 
 namespace DPB\DefDiff\Scanner;
 
-use DPB\DefDiff\Definition\Definition;
+use DPB\DefDiff\Definition\ClassDefinition;
+use DPB\DefDiff\Definition\FunctionDefinition;
+use DPB\DefDiff\Definition\FunctionParamDefinition;
 
-class ClassMethodArgumentScanner extends Scanner
+class ClassMethodParamScanner extends Scanner
 {
     protected $currClass;
     protected $currMethod;
@@ -17,12 +19,9 @@ class ClassMethodArgumentScanner extends Scanner
             $this->currMethod = $node->name;
         } elseif ($node instanceof \PHPParser_Node_Param && $this->currClass && $this->currMethod) {
             $defn = $this->scope
-                ->assert('class')
-                ->assert($this->currClass)
-                ->assert('method')
-                ->assert($this->currMethod)
-                ->assert('params')
-                ->assert($node->name)
+                ->assert(new ClassDefinition($this->currClass))
+                ->assert(new FunctionDefinition($this->currMethod))
+                ->assert(new FunctionParamDefinition($node->name))
             ;
 
             if ($node->default) {
@@ -50,8 +49,15 @@ class ClassMethodArgumentScanner extends Scanner
                             'value' => $node->default->items,
                         )
                     );
+                } elseif ($node->default instanceof \PHPParser_Node_Scalar) {
+                    $defn->setAttribute(
+                        'default',
+                        array(
+                            'type' => 'literal',
+                            'value' => $node->default->value,
+                        )
+                    );
                 } else {
-                    die(print_r($node->default, true));
                     throw new \LogicException('unhandled');
                 }
             }
