@@ -3,6 +3,7 @@
 namespace DPB\DefDiff\Scanner;
 
 use DPB\DefDiff\Definition\ClassDefinition;
+use DPB\DefDiff\Definition\DefnDefinition;
 
 class ClassScanner extends Scanner
 {
@@ -13,8 +14,9 @@ class ClassScanner extends Scanner
                 ->assert(new ClassDefinition($node->namespacedName->toString()))
             ;
 
-            $defn->setAttribute('file', '/dev/null');
-            $defn->setAttribute('line', $node->getAttribute('startLine'));
+            #$source = $defn->assert(new DefnDefinition('source'));
+            #$source->setAttribute('file', '/dev/null');
+            #$source->setAttribute('line', $node->getAttribute('startLine'));
         }
     }
 }

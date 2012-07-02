@@ -24,24 +24,29 @@ class XmlDumper
             )
         );
 
-        $str = str_repeat('  ', $depth) . '<defdiff:' . $basename . ' id="' . $defn->getDefnId() . '">' . "\n";
+        $str = str_repeat('  ', $depth) . '<' . $basename . ' id="' . $defn->getDefnId() . '"';
 
-        foreach ($defn->getAttributes() as $key => $value) {
-            $type = gettype($value);
-
+        foreach ($defn->getAttributes() as $name => $value) {
             if (is_bool($value)) {
-                $type = 'boolean';
                 $value = $value ? 'true' : 'false';
             }
 
-            $str .= str_repeat('  ', $depth + 1) . '<defdiff:attr name="' . $key . '" type="' . $type . '" value="' . $value . '" />' . "\n";
+            $str .= ' ' . $name . '="' . $value . '"';
         }
 
-        foreach ($defn as $subdefn) {
-            $str .= $this->dumpDefinition($subdefn, $depth + 1);
-        }
+        $nodes = iterator_to_array($defn);
 
-        $str .= str_repeat('  ', $depth) . '</defdiff:' . $basename . '>' . "\n";
+        if ($nodes) {
+            $str .= '>' . "\n";
+    
+            foreach ($nodes as $subdefn) {
+                $str .= $this->dumpDefinition($subdefn, $depth + 1);
+            }
+
+            $str .= str_repeat('  ', $depth) . '</' . $basename . '>' . "\n";
+        } else {
+            $str .= ' />' . "\n";
+        }
 
         return $str;
     }

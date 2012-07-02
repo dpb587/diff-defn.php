@@ -2,6 +2,7 @@
 
 namespace DPB\DefDiff\Scanner;
 
+use DPB\DefDiff\Definition\DefnDefinition;
 use DPB\DefDiff\Definition\FunctionDefinition;
 
 class FunctionScanner extends Scanner
@@ -13,8 +14,9 @@ class FunctionScanner extends Scanner
                 ->assert(new FunctionDefinition($node->namespacedName->toString()))
             ;
 
-            $defn->setAttribute('file', '/dev/null');
-            $defn->setAttribute('line', $node->getAttribute('startLine'));
+            #$source = $defn->assert(new DefnDefinition('source'));
+            #$source->setAttribute('file', '/dev/null');
+            #$source->setAttribute('line', $node->getAttribute('startLine'));
         }
     }
 }

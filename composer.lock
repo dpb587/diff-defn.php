@@ -10,6 +10,12 @@
         {
             "package": "symfony/console",
             "version": "dev-master",
+            "alias-pretty-version": "2.1.x-dev",
+            "alias-version": "2.1.9999999.9999999-dev"
+        },
+        {
+            "package": "symfony/console",
+            "version": "dev-master",
             "source-reference": "808bf42b4b74c12e6c6a6a9750688035f1c49f9c",
             "commit-date": "1340543161"
         },
@@ -28,8 +34,14 @@
         {
             "package": "symfony/yaml",
             "version": "dev-master",
-            "source-reference": "v2.1.0-BETA1",
-            "commit-date": "1339592252"
+            "alias-pretty-version": "2.1.x-dev",
+            "alias-version": "2.1.9999999.9999999-dev"
+        },
+        {
+            "package": "symfony/yaml",
+            "version": "dev-master",
+            "source-reference": "fa301d6bd6d2538b48fbf668879d6e052ed9caad",
+            "commit-date": "1341134393"
         }
     ],
     "packages-dev": null,

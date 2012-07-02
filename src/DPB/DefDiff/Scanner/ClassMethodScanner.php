@@ -2,7 +2,9 @@
 
 namespace DPB\DefDiff\Scanner;
 
+use DPB\DefDiff\Definition\AttrDefinition;
 use DPB\DefDiff\Definition\ClassDefinition;
+use DPB\DefDiff\Definition\DefnDefinition;
 use DPB\DefDiff\Definition\Definition;
 use DPB\DefDiff\Definition\FunctionDefinition;
 
@@ -14,25 +16,29 @@ class ClassMethodScanner extends Scanner
     {
         if ($node instanceof \PHPParser_Node_Stmt_Class) {
             $this->currClass = $node->namespacedName->toString();
-        } elseif ($node instanceof \PHPParser_Node_Stmt_ClassMethod) {
+        } elseif ($node instanceof \PHPParser_Node_Stmt_ClassMethod && isset($this->currClass)) {
             $defn = $this->scope
                 ->assert(new ClassDefinition($this->currClass))
                 ->assert(new FunctionDefinition($node->name))
             ;
 
-            $defn->setAttribute('line', $node->getAttribute('startLine'));
+            #$source = $defn->assert(new DefnDefinition('source'));
+            #$source->setAttribute('file', '/dev/null');
+            #$source->setAttribute('line', $node->getAttribute('startLine'));
+
+            $attr = $defn->assert(new AttrDefinition('visibility'));
 
             if ($node->type & \PHPParser_Node_Stmt_Class::MODIFIER_PUBLIC) {
-                $defn->setAttribute('visibility', 'public');
+                $attr->setAttribute('value', 'public');
             } elseif ($node->type & \PHPParser_Node_Stmt_Class::MODIFIER_PROTECTED) {
-                $defn->setAttribute('visibility', 'protected');
+                $attr->setAttribute('value', 'protected');
             } elseif ($node->type & \PHPParser_Node_Stmt_Class::MODIFIER_PRIVATE) {
-                $defn->setAttribute('visibility', 'private');
+                $attr->setAttribute('value', 'private');
             }
 
-            $defn->setAttribute('final', (bool) ($node->type & \PHPParser_Node_Stmt_Class::MODIFIER_FINAL));
-            $defn->setAttribute('static', (bool) ($node->type & \PHPParser_Node_Stmt_Class::MODIFIER_STATIC));
-            $defn->setAttribute('abstract', (bool) ($node->type & \PHPParser_Node_Stmt_Class::MODIFIER_ABSTRACT));
+            $defn->assert(new AttrDefinition('final'))->setAttribute('value', (bool) ($node->type & \PHPParser_Node_Stmt_Class::MODIFIER_FINAL));
+            $defn->assert(new AttrDefinition('static'))->setAttribute('value', (bool) ($node->type & \PHPParser_Node_Stmt_Class::MODIFIER_STATIC));
+            $defn->assert(new AttrDefinition('abstract'))->setAttribute('value', (bool) ($node->type & \PHPParser_Node_Stmt_Class::MODIFIER_ABSTRACT));
         }
     }
 

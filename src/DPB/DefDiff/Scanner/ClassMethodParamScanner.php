@@ -2,6 +2,7 @@
 
 namespace DPB\DefDiff\Scanner;
 
+use DPB\DefDiff\Definition\AttrDefinition;
 use DPB\DefDiff\Definition\ClassDefinition;
 use DPB\DefDiff\Definition\FunctionDefinition;
 use DPB\DefDiff\Definition\FunctionParamDefinition;
@@ -17,7 +18,7 @@ class ClassMethodParamScanner extends Scanner
             $this->currClass = $node->namespacedName->toString();
         } elseif ($node instanceof \PHPParser_Node_Stmt_ClassMethod) {
             $this->currMethod = $node->name;
-        } elseif ($node instanceof \PHPParser_Node_Param && $this->currClass && $this->currMethod) {
+        } elseif ($node instanceof \PHPParser_Node_Param && isset($this->currClass) && isset($this->currMethod)) {
             $defn = $this->scope
                 ->assert(new ClassDefinition($this->currClass))
                 ->assert(new FunctionDefinition($this->currMethod))
@@ -25,45 +26,32 @@ class ClassMethodParamScanner extends Scanner
             ;
 
             if ($node->default) {
-                if ($node->default instanceof \PHPParser_Node_Scalar_String) {
-                    $defn->setAttribute(
-                        'default',
-                        array(
-                            'type' => 'string',
-                            'value' => $node->default->value,
-                        )
-                    );
+                $attr = $defn->assert(new AttrDefinition('default'));
+
+                if ($node->default instanceof \PHPParser_Node_Scalar) {
+                    $attr->setAttribute('type', 'string');
+                    $attr->setAttribute('value', $node->default->value);
                 } elseif ($node->default instanceof \PHPParser_Node_Expr_ConstFetch) {
-                    $defn->setAttribute(
-                        'default',
-                        array(
-                            'type' => 'const',
-                            'value' => implode('', $node->default->name->parts), // @todo correct?
-                        )
-                    );
+                    $attr->setAttribute('type', 'const');
+                    $attr->setAttribute('value', implode('', $node->default->name->parts)); // @todo correct?
+                } elseif ($node->default instanceof \PHPParser_Node_Expr_ClassConstFetch) {
+                    $attr->setAttribute('type', 'const');
+                    $attr->setAttribute('value', implode('', $node->default->class->parts) . '::' . $node->default->name);
                 } elseif ($node->default instanceof \PHPParser_Node_Expr_Array) {
-                    $defn->setAttribute(
-                        'default',
-                        array(
-                            'type' => 'array',
-                            'value' => $node->default->items,
-                        )
-                    );
-                } elseif ($node->default instanceof \PHPParser_Node_Scalar) {
-                    $defn->setAttribute(
-                        'default',
-                        array(
-                            'type' => 'literal',
-                            'value' => $node->default->value,
-                        )
-                    );
+                    $attr->setAttribute('type', 'array');
+                    $attr->setAttribute('value', json_encode($node->default->items));
+                } elseif ($node->default instanceof \PHPParser_Node_Expr_UnaryMinus) {
+                    $attr->setAttribute('type', 'literal');
+                    $attr->setAttribute('value', $node->default->expr->value);
                 } else {
+                    die(print_r($node->default, true));
                     throw new \LogicException('unhandled');
                 }
             }
 
             if ($node->type) {
-                $defn->setAttribute('type', (string) $node->type);
+                $attr = $defn->assert(new AttrDefinition('type'));
+                $attr->setAttribute('value', (string) $node->type);
             }
         }
     }

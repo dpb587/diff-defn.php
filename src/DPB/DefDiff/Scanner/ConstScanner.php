@@ -3,6 +3,7 @@
 namespace DPB\DefDiff\Scanner;
 
 use DPB\DefDiff\Definition\ConstDefinition;
+use DPB\DefDiff\Definition\DefnDefinition;
 
 class ConstScanner extends Scanner
 {
@@ -13,8 +14,9 @@ class ConstScanner extends Scanner
                 ->assert(new ConstDefinition($node->name))
             ;
 
-            $defn->setAttribute('file', '/dev/null');
-            $defn->setAttribute('line', $node->getAttribute('startLine'));
+            #$source = $defn->assert(new DefnDefinition('source'));
+            #$source->setAttribute('file', '/dev/null');
+            #$source->setAttribute('line', $node->getAttribute('startLine'));
         }
     }
 }
