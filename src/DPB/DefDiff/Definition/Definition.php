@@ -8,11 +8,13 @@ class Definition implements \IteratorAggregate
     private $defnParent;
 
     protected $nodes = array();
-    protected $attrs = array();
+    protected $attrs;
 
-    public function __construct($defnId)
+    public function __construct($defnId, array $attrs = array())
     {
         $this->defnId = $defnId;
+
+        $this->attrs = $attrs;
     }
 
     public function getDefnId()
@@ -69,11 +71,11 @@ class Definition implements \IteratorAggregate
 
         $id = (string) $defn;
 
-        if (isset($this->nodes[$id])) {
-            return $this->nodes[$id];
+        if (!isset($this->nodes[$id])) {
+            $this->nodes[$id] = clone $defn;
         }
 
-        return $this->nodes[$id] = $defn;
+        return $this->nodes[$id];
     }
 
     public function has(Definition $defn)
@@ -103,5 +105,10 @@ class Definition implements \IteratorAggregate
     public function __toString()
     {
         return get_class($this) . ':' . $this->defnId;
+    }
+
+    public function isComparable()
+    {
+        return true;
     }
 }

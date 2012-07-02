@@ -19,14 +19,16 @@ class DefinitionComparator
             throw new \LogicException(sprintf('Definitions have different IDs (%s vs %s)', $a->getDefnId(), $b->getDefnId()));
         }
 
-        $c = new $baseclass($a->getDefnId());
+        if (!$a->isComparable()) {
+            return $a;
+        }
+
+        $c = new $baseclass($a->getDefnId(), $a->getAttributes());
 
         foreach ($a->getAttributes() as $name => $value) {
-            if ($a->getAttribute($name) != $b->getAttribute($name)) {
+            if ((!$b->hasAttribute($name)) || ($value != $b->getAttribute($name))) {
                 $c->setAttribute('diff', 'changed');
             }
-
-            $c->setAttribute($name, $value);
         }
 
         foreach ($a as $sub) {
@@ -34,13 +36,14 @@ class DefinitionComparator
                 $sub = $this->compare($sub, $b->get($sub), $depth + 1);
 
                 if ($sub) {
-                    if ($sub->getAttribute('diff') != 'touched') {
+                    if ($sub->hasAttribute('diff')) {
                         $bc = clone $b->get($sub);
                         $sub->assert(new DiffOldDefinition('old'))->assert($bc);
+
+                        $c->setAttribute('diff', 'touched');
                     }
 
                     $c->assert($sub);
-                    $c->setAttribute('diff', 'touched');
                 }
             } else {
                 $sub = $c->assert($sub);

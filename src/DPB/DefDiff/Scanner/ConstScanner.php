@@ -4,6 +4,7 @@ namespace DPB\DefDiff\Scanner;
 
 use DPB\DefDiff\Definition\ConstDefinition;
 use DPB\DefDiff\Definition\DefnDefinition;
+use DPB\DefDiff\Definition\DefnSourceDefinition;
 
 class ConstScanner extends Scanner
 {
@@ -14,9 +15,13 @@ class ConstScanner extends Scanner
                 ->assert(new ConstDefinition($node->name))
             ;
 
-            #$source = $defn->assert(new DefnDefinition('source'));
-            #$source->setAttribute('file', '/dev/null');
-            #$source->setAttribute('line', $node->getAttribute('startLine'));
+            $source = $defn->assert(new DefnSourceDefinition('source'));
+
+            if ($this->scope->hasAttribute('file')) {
+                $source->setAttribute('file', $this->scope->getAttribute('file'));
+            }
+
+            $source->setAttribute('line', $node->getAttribute('startLine'));
         }
     }
 }
