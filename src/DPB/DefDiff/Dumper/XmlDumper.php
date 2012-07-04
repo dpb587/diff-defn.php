@@ -8,13 +8,13 @@ class XmlDumper
 {
     public function dump(Definition $defn)
     {
-        return 
-            '<?xml version="1.0" encoding="UTF-8" ?>' . "\n"
-            . $this->dumpDefinition($defn)
-        ;
+        $document = new \DOMDocument('1.0');
+        $document->appendChild($this->dumpDefinition($document, $defn));
+
+        return $document->saveXML();
     }
 
-    protected function dumpDefinition(Definition $defn, $depth = 0)
+    protected function dumpDefinition(\DOMDocument $document, Definition $defn)
     {
         $basename = strtolower(
             preg_replace(
@@ -24,30 +24,21 @@ class XmlDumper
             )
         );
 
-        $str = str_repeat('  ', $depth) . '<' . $basename . ' id="' . $defn->getDefnId() . '"';
+        $element = $document->createElement($basename);
+        $element->setAttribute('id', $defn->getDefnId());
 
         foreach ($defn->getAttributes() as $name => $value) {
             if (is_bool($value)) {
                 $value = $value ? 'true' : 'false';
             }
 
-            $str .= ' ' . $name . '="' . $value . '"';
+            $element->setAttribute($name, $value);
         }
 
-        $nodes = iterator_to_array($defn);
-
-        if ($nodes) {
-            $str .= '>' . "\n";
-    
-            foreach ($nodes as $subdefn) {
-                $str .= $this->dumpDefinition($subdefn, $depth + 1);
-            }
-
-            $str .= str_repeat('  ', $depth) . '</' . $basename . '>' . "\n";
-        } else {
-            $str .= ' />' . "\n";
+        foreach ($defn as $subdefn) {
+            $element->appendChild($this->dumpDefinition($document, $subdefn));
         }
 
-        return $str;
+        return $element;
     }
 }

@@ -20,8 +20,8 @@ class DiffShowCommand extends Command
             ->setName('diff:show')
             ->setDescription('Parse files from a given commit.')
             ->addArgument('repository', InputArgument::REQUIRED, 'Repository')
-            ->addArgument('commit-start', InputArgument::REQUIRED, 'Commit (start)')
-            ->addArgument('commit-end', InputArgument::REQUIRED, 'Commit (end)')
+            ->addArgument('commit-final', InputArgument::REQUIRED, 'Commit (final)')
+            ->addArgument('commit-begin', InputArgument::REQUIRED, 'Commit (begin)')
             ->addOption('stylesheet', null, InputOption::VALUE_REQUIRED, 'Stylesheet for output', null)
             ->addOption('output', null, InputOption::VALUE_REQUIRED, 'Output transformed file', '-')
         ;
@@ -29,22 +29,22 @@ class DiffShowCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $inputRepository = $input->getArgument('repository');
-        $inputCommitStart = $input->getArgument('commit-start');
-        $inputCommitEnd = $input->getArgument('commit-end');
-#/*
-        $repo = new \DPB\DefDiff\Repository\GitRepository();
+        $mt = microtime(true);
 
-        $inputCommitStart = $repo->resolveCommit($inputRepository, $inputCommitStart);
-        $inputCommitEnd = $repo->resolveCommit($inputRepository, $inputCommitEnd);
+        $inputRepository = $input->getArgument('repository');
+        $inputCommitStart = $input->getArgument('commit-final');
+        $inputCommitEnd = $input->getArgument('commit-begin');
+
+        $repoFactory = new \DPB\DefDiff\Repository\Factory();
+
+        $repo = $repoFactory->create($inputRepository);
+
+        $inputCommitStart = $repo->resolveCommit($inputCommitStart);
+        $inputCommitEnd = $repo->resolveCommit($inputCommitEnd);
 
         $output->writeln(sprintf('Comparing <info>%s</info> to <info>%s</info>', $inputCommitStart, $inputCommitEnd));
 
-        $diffs = $repo->getChangedFiles(
-            $inputRepository,
-            $inputCommitStart,
-            $inputCommitEnd
-        );
+        $diffs = $repo->getChangedFiles($inputCommitStart, $inputCommitEnd);
 
         $output->writeln('Found ' . count($diffs) . ' changed file' . (1 != count($diffs) ? 's' : ''));
 
@@ -58,15 +58,15 @@ class DiffShowCommand extends Command
             )
         );
 
-        $startScope = new RootDefinition('root');
-        $startScope->assert($defnRepository)->assert(new DefnDefinition('commit'))->setAttribute('value', $inputCommitStart);
+        $finalScope = new RootDefinition('root');
+        $finalScope->assert($defnRepository)->assert(new DefnDefinition('commit'))->setAttribute('value', $inputCommitStart);
         
-        $endScope = new RootDefinition('root');
-        $endScope->assert($defnRepository)->assert(new DefnDefinition('commit'))->setAttribute('value', $inputCommitEnd);
+        $beginScope = new RootDefinition('root');
+        $beginScope->assert($defnRepository)->assert(new DefnDefinition('commit'))->setAttribute('value', $inputCommitEnd);
 
         foreach ($diffs as $file) {
-            $startScope->setAttribute('file', $file);
-            $endScope->setAttribute('file', $file);
+            $finalScope->setAttribute('file', $file);
+            $beginScope->setAttribute('file', $file);
 
             $output->write($file . '...');
 
@@ -76,43 +76,45 @@ class DiffShowCommand extends Command
                 continue;
             }
 
-            Processor::process(
-                $startScope,
-                $repo->getFileContent(
-                    $input->getArgument('repository'),
-                    $input->getArgument('commit-start'),
-                    $file
-                )
-            );
+            try {
 
-            $output->write('...');
-
-            Processor::process(
-                $endScope,
-                $repo->getFileContent(
-                    $input->getArgument('repository'),
-                    $input->getArgument('commit-end'),
-                    $file
-                )
-            );
-
-            $output->writeln('done');
+                Processor::process(
+                    $finalScope,
+                    $repo->getFileContent(
+                        $input->getArgument('commit-final'),
+                        $file
+                    )
+                );
+    
+                $output->write('...');
+    
+                Processor::process(
+                    $beginScope,
+                    $repo->getFileContent(
+                        $input->getArgument('commit-begin'),
+                        $file
+                    )
+                );
+    
+                $output->writeln('done');
+            } catch (\PHPParser_Error $e) {
+                $output->writeln('<error>error</error>');
+                $output->writeln('  ' . $e->getMessage());
+            }
         }
 
-        $startScope->unsetAttribute('file');
-        $endScope->unsetAttribute('file');
+        $finalScope->unsetAttribute('file');
+        $beginScope->unsetAttribute('file');
 
         $dumper = new XmlDumper();
         $comparator = new \DPB\DefDiff\Comparator\DefinitionComparator();
 
-        file_put_contents('/tmp/defdiff-start.xml', $dumper->dump($startScope));
-        file_put_contents('/tmp/defdiff-end.xml', $dumper->dump($endScope));
+        file_put_contents('/tmp/defdiff-final.xml', $dumper->dump($finalScope));
+        file_put_contents('/tmp/defdiff-begin.xml', $dumper->dump($beginScope));
 
-        $diff = $dumper->dump($comparator->compare($startScope, $endScope));
+        $diff = $dumper->dump($comparator->compare($finalScope, $beginScope));
 
         file_put_contents('/tmp/defdiff-diff.xml', $diff);
-#*/
-    $diff = file_get_contents('/tmp/defdiff-diff.xml');
 
         $xsl = new \DOMDocument();
         $xsl->load($input->getOption('stylesheet') ?: (__DIR__ . '/../../Resources/xsl/default.xsl'));
@@ -125,6 +127,8 @@ class DiffShowCommand extends Command
         $xml->loadXML($diff);
 
         $result = $xslt->transformToXML($xml);
+
+        $output->writeln(sprintf('Finished in <info>%01.2f</info> seconds, <info>%01.1f</info> MB.', microtime(true) - $mt, (memory_get_usage(true) / (1024 * 1024))));
 
         if ('-' == $input->getOption('output')) {
             $output->write($result);

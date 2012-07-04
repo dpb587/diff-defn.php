@@ -50,7 +50,7 @@ class ClassMethodParamScanner extends Scanner
             }
 
             if ($node->type) {
-                $attr = $defn->assert(new AttrDefinition('type'));
+                $attr = $defn->assert(new AttrDefinition('typehint'));
                 $attr->setAttribute('value', (string) $node->type);
             }
         }
