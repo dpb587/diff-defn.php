@@ -121,6 +121,10 @@
                         border-top: #F3F3F3 solid 1px;
                         padding: 16px 12px;
                     }
+
+                    small {
+                        color: #999999;
+                    }
                 </style>
             </head>
 
@@ -314,7 +318,7 @@
                 </xsl:if>
 
                 <footer>
-                    <p>
+                    <p style="margin-top:0;">
                         <a href="http://dpb587.github.com/">dpb587</a>/<a href="http://dpb587.github.com/def-diff/">def-diff</a>
                         &#8212;
                         a tool for comparing application definitions.
@@ -363,6 +367,21 @@
                     <xsl:value-of select="@id" />
                 </a>
             </code>
+
+            <xsl:variable name="constants" select="count(constant)" />
+            <xsl:variable name="functions" select="count(function)" />
+
+            <xsl:if test="$constants or $functions">
+                <small>
+                    &#8211;
+                    <xsl:if test="$constants">
+                        <xsl:value-of select="$constants" /> constant<xsl:if test="$constants &gt; 1">s</xsl:if><xsl:if test="$functions">, </xsl:if>
+                    </xsl:if>
+                    <xsl:if test="$functions">
+                        <xsl:value-of select="$functions" /> function<xsl:if test="$functions &gt; 1">s</xsl:if>
+                    </xsl:if>
+                </small>
+            </xsl:if>
         </dt>
     </xsl:template>
 
@@ -377,6 +396,21 @@
                     <xsl:value-of select="@id" />
                 </a>
             </code>
+
+            <xsl:variable name="constants" select="count(constant)" />
+            <xsl:variable name="functions" select="count(function)" />
+
+            <xsl:if test="$constants or $functions">
+                <small>
+                    &#8211;
+                    <xsl:if test="$constants">
+                        <xsl:value-of select="$constants" /> constant<xsl:if test="$constants &gt; 1">s</xsl:if><xsl:if test="$functions">, </xsl:if>
+                    </xsl:if>
+                    <xsl:if test="$functions">
+                        <xsl:value-of select="$functions" /> function<xsl:if test="$functions &gt; 1">s</xsl:if>
+                    </xsl:if>
+                </small>
+            </xsl:if>
         </dt>
     </xsl:template>
 
@@ -520,28 +554,28 @@
             </dd>
         </xsl:if>
 
-        <xsl:variable name="method_add" select="count(function[@diff = 'added'])" />
-        <xsl:variable name="method_removed" select="count(function[@diff = 'removed'])" />
-        <xsl:variable name="method_touched" select="count(function[@diff = 'touched'])" />
+        <xsl:variable name="function_add" select="count(function[@diff = 'added'])" />
+        <xsl:variable name="function_removed" select="count(function[@diff = 'removed'])" />
+        <xsl:variable name="function_touched" select="count(function[@diff = 'touched'])" />
         
-        <xsl:if test="$method_add or $method_touched or $method_removed">
+        <xsl:if test="$function_add or $function_touched or $function_removed">
             <dd>
                 <dl>
                     <dt>
                         <h3>
-                            Methods
+                            Functions
                             <small>
                                 &#8212;
-                                <xsl:if test="$method_add">
-                                    <xsl:value-of select="$method_add" />
-                                    added<xsl:if test="$method_removed or $method_touched">, </xsl:if>
+                                <xsl:if test="$function_add">
+                                    <xsl:value-of select="$function_add" />
+                                    added<xsl:if test="$function_removed or $function_touched">, </xsl:if>
                                 </xsl:if>
-                                <xsl:if test="$method_removed">
-                                    <xsl:value-of select="$method_removed" />
-                                    removed<xsl:if test="$method_touched">, </xsl:if>
+                                <xsl:if test="$function_removed">
+                                    <xsl:value-of select="$function_removed" />
+                                    removed<xsl:if test="$function_touched">, </xsl:if>
                                 </xsl:if>
-                                <xsl:if test="$method_touched">
-                                    <xsl:value-of select="$method_touched" />
+                                <xsl:if test="$function_touched">
+                                    <xsl:value-of select="$function_touched" />
                                     touched
                                 </xsl:if>
                             </small>
