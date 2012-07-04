@@ -8,9 +8,19 @@ use DPB\DefDiff\Definition\DefnSourceDefinition;
 
 class ConstScanner extends Scanner
 {
-    public function leaveNode(\PHPParser_Node $node)
+    protected $stmtScope = array();
+
+    public function enterNode(\PHPParser_Node $node)
     {
-        if ($node instanceof \PHPParser_Node_Const) {
+        if ($node instanceof \PHPParser_Node_Stmt_Class) {
+            array_push($this->stmtScope, 'class');
+        } elseif ($node instanceof \PHPParser_Node_Stmt_Interface) {
+            array_push($this->stmtScope, 'interface');
+        } elseif (($node instanceof \PHPParser_Node_Const) && (0 == count($this->stmtScope))) {
+            if (isset($node->_classScope)) {
+                return;
+            }
+
             $defn = $this->scope
                 ->assert(new ConstDefinition($node->name))
             ;
@@ -22,6 +32,15 @@ class ConstScanner extends Scanner
             }
 
             $source->setAttribute('line', $node->getAttribute('startLine'));
+        }
+    }
+
+    public function leaveNode(\PHPParser_Node $node)
+    {
+        if ($node instanceof \PHPParser_Node_Stmt_Class) {
+            array_shift($this->stmtScope);
+        } elseif ($node instanceof \PHPParser_Node_Stmt_Interface) {
+            array_shift($this->stmtScope);
         }
     }
 }

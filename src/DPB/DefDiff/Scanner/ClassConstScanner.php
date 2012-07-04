@@ -4,12 +4,13 @@ namespace DPB\DefDiff\Scanner;
 
 use DPB\DefDiff\Definition\AttrDefinition;
 use DPB\DefDiff\Definition\ClassDefinition;
+use DPB\DefDiff\Definition\ConstDefinition;
 use DPB\DefDiff\Definition\DefnDefinition;
 use DPB\DefDiff\Definition\DefnSourceDefinition;
 use DPB\DefDiff\Definition\Definition;
 use DPB\DefDiff\Definition\FunctionDefinition;
 
-class ClassMethodScanner extends Scanner
+class ClassConstScanner extends Scanner
 {
     protected $currClass;
 
@@ -17,10 +18,10 @@ class ClassMethodScanner extends Scanner
     {
         if ($node instanceof \PHPParser_Node_Stmt_Class) {
             $this->currClass = $node->namespacedName->toString();
-        } elseif ($node instanceof \PHPParser_Node_Stmt_ClassMethod && isset($this->currClass)) {
+        } elseif ($node instanceof \PHPParser_Node_Stmt_ClassConst && isset($this->currClass)) {
             $defn = $this->scope
                 ->assert(new ClassDefinition($this->currClass))
-                ->assert(new FunctionDefinition($node->name))
+                ->assert(new ConstDefinition($node->consts[0]->name))
             ;
 
             $source = $defn->assert(new DefnSourceDefinition('source'));
@@ -29,21 +30,17 @@ class ClassMethodScanner extends Scanner
                 $source->setAttribute('file', $this->scope->getAttribute('file'));
             }
 
-            $source->setAttribute('line', $node->getAttribute('startLine'));
+            $source->setAttribute('line', $node->consts[0]->getAttribute('startLine'));
 
             $attr = $defn->assert(new AttrDefinition('visibility'));
 
-            if ($node->type & \PHPParser_Node_Stmt_Class::MODIFIER_PUBLIC) {
+            if ($node->consts[0]->type & \PHPParser_Node_Stmt_Class::MODIFIER_PUBLIC) {
                 $attr->setAttribute('value', 'public');
-            } elseif ($node->type & \PHPParser_Node_Stmt_Class::MODIFIER_PROTECTED) {
+            } elseif ($node->consts[0]->type & \PHPParser_Node_Stmt_Class::MODIFIER_PROTECTED) {
                 $attr->setAttribute('value', 'protected');
-            } elseif ($node->type & \PHPParser_Node_Stmt_Class::MODIFIER_PRIVATE) {
+            } elseif ($node->consts[0]->type & \PHPParser_Node_Stmt_Class::MODIFIER_PRIVATE) {
                 $attr->setAttribute('value', 'private');
             }
-
-            $defn->assert(new AttrDefinition('final'))->setAttribute('value', (bool) ($node->type & \PHPParser_Node_Stmt_Class::MODIFIER_FINAL));
-            $defn->assert(new AttrDefinition('static'))->setAttribute('value', (bool) ($node->type & \PHPParser_Node_Stmt_Class::MODIFIER_STATIC));
-            $defn->assert(new AttrDefinition('abstract'))->setAttribute('value', (bool) ($node->type & \PHPParser_Node_Stmt_Class::MODIFIER_ABSTRACT));
         }
     }
 

@@ -7,21 +7,21 @@ use DPB\DefDiff\Definition\ClassDefinition;
 use DPB\DefDiff\Definition\FunctionDefinition;
 use DPB\DefDiff\Definition\FunctionParamDefinition;
 
-class ClassMethodParamScanner extends Scanner
+class ClassFunctionParamScanner extends Scanner
 {
     protected $currClass;
-    protected $currMethod;
+    protected $currFunction;
 
     public function enterNode(\PHPParser_Node $node)
     {
         if ($node instanceof \PHPParser_Node_Stmt_Class) {
             $this->currClass = $node->namespacedName->toString();
         } elseif ($node instanceof \PHPParser_Node_Stmt_ClassMethod) {
-            $this->currMethod = $node->name;
-        } elseif ($node instanceof \PHPParser_Node_Param && isset($this->currClass) && isset($this->currMethod)) {
+            $this->currFunction = $node->name;
+        } elseif ($node instanceof \PHPParser_Node_Param && isset($this->currClass, $this->currFunction)) {
             $defn = $this->scope
                 ->assert(new ClassDefinition($this->currClass))
-                ->assert(new FunctionDefinition($this->currMethod))
+                ->assert(new FunctionDefinition($this->currFunction))
                 ->assert(new FunctionParamDefinition($node->name))
             ;
 
@@ -59,7 +59,7 @@ class ClassMethodParamScanner extends Scanner
     public function leaveNode(\PHPParser_Node $node)
     {
         if ($node instanceof \PHPParser_Node_Stmt_ClassMethod) {
-            unset($this->currMethod);
+            unset($this->currFunction);
         } elseif ($node instanceof \PHPParser_Node_Stmt_Class) {
             unset($this->currClass);
         }
