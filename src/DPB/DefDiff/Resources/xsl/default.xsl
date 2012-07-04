@@ -137,30 +137,51 @@
                     <h1><xsl:value-of select="/root/defn[@id = 'source']/@repository" /></h1>
 
                     <p>
-                        <a>
-                            <xsl:attribute name="href">
-                                <xsl:value-of select="/root/defn[@id = 'source']/@repository-link" />
-                            </xsl:attribute>
-                            <xsl:value-of select="/root/defn[@id = 'source']/@repository-link" />
-                        </a>
-                        &#8213;
-                        comparing
+                        <xsl:choose>
+                            <xsl:when test="//root/defn[@id = 'source']/@repository-link">
+                                <a>
+                                    <xsl:attribute name="href">
+                                        <xsl:value-of select="/root/defn[@id = 'source']/@repository-link" />
+                                    </xsl:attribute>
+                                    <xsl:value-of select="/root/defn[@id = 'source']/@repository-link" />
+                                </a>
+                                &#8213;
+                                comparing
+                            </xsl:when>
+                            <xsl:otherwise>
+                                Comparing
+                            </xsl:otherwise>
+                        </xsl:choose>
                         <code>
-                            <a>
-                                <xsl:attribute name="href">
-                                    <xsl:value-of select="php:function('str_replace', '%commit%', string(/root/defn[@id = 'source']/defn[@id = 'commit']/@value), string(/root/defn[@id = 'source']/@commit-link))" />
-                                </xsl:attribute>
-                                <xsl:value-of select="substring(/root/defn[@id = 'source']/defn[@id = 'commit']/@value, 0, 8)" />
-                            </a>
+                            <xsl:choose>
+                                <xsl:when test="//root/defn[@id = 'source']/@commit-link">
+                                    <a>
+                                        <xsl:attribute name="href">
+                                            <xsl:value-of select="php:function('str_replace', '%commit%', string(/root/defn[@id = 'source']/defn[@id = 'commit']/diff-old/defn[@id = 'commit']/@value), string(/root/defn[@id = 'source']/@commit-link))" />
+                                        </xsl:attribute>
+                                        <xsl:value-of select="substring(/root/defn[@id = 'source']/defn[@id = 'commit']/diff-old/defn[@id = 'commit']/@friendly, 0, 8)" />
+                                    </a>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="substring(/root/defn[@id = 'source']/defn[@id = 'commit']/diff-old/defn[@id = 'commit']/@value, 0, 8)" />
+                                </xsl:otherwise>
+                            </xsl:choose>
                         </code>
                         &#8230;
                         <code>
-                            <a>
-                                <xsl:attribute name="href">
-                                    <xsl:value-of select="php:function('str_replace', '%commit%', string(/root/defn[@id = 'source']/defn[@id = 'commit']/diff-old/defn[@id = 'commit']/@value), string(/root/defn[@id = 'source']/@commit-link))" />
-                                </xsl:attribute>
-                                <xsl:value-of select="substring(/root/defn[@id = 'source']/defn[@id = 'commit']/diff-old/defn[@id = 'commit']/@value, 0, 8)" />
-                            </a>
+                            <xsl:choose>
+                                <xsl:when test="//root/defn[@id = 'source']/@commit-link">
+                                    <a>
+                                        <xsl:attribute name="href">
+                                            <xsl:value-of select="php:function('str_replace', '%commit%', string(/root/defn[@id = 'source']/defn[@id = 'commit']/@value), string(/root/defn[@id = 'source']/@commit-link))" />
+                                        </xsl:attribute>
+                                        <xsl:value-of select="substring(/root/defn[@id = 'source']/defn[@id = 'commit']/@friendly, 0, 8)" />
+                                    </a>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="substring(/root/defn[@id = 'source']/defn[@id = 'commit']/@value, 0, 8)" />
+                                </xsl:otherwise>
+                            </xsl:choose>
                         </code>
                     </p>
                 </header>
@@ -336,12 +357,19 @@
         <dt>
             <i class="bullet-added">&#160;</i>
             <code>
-                <a>
-                    <xsl:attribute name="href">
-                        <xsl:value-of select="php:function('str_replace', '%line%', string(defn-source[@id = 'source']/@line), php:function('str_replace', '%file%', string(defn-source[@id = 'source']/@file), php:function('str_replace', '%commit%', string(/root/defn[@id = 'source']/defn[@id = 'commit']/@value), string(/root/defn[@id = 'source']/@file-link))))" />
-                    </xsl:attribute>
-                    <xsl:value-of select="@id" />
-                </a>
+                <xsl:choose>
+                    <xsl:when test="/root/defn[@id = 'source']/@file-link">
+                        <a>
+                            <xsl:attribute name="href">
+                                <xsl:value-of select="php:function('str_replace', '%line%', string(defn-source[@id = 'source']/@line), php:function('str_replace', '%file%', string(defn-source[@id = 'source']/@file), php:function('str_replace', '%commit%', string(/root/defn[@id = 'source']/defn[@id = 'commit']/@value), string(/root/defn[@id = 'source']/@file-link))))" />
+                            </xsl:attribute>
+                            <xsl:value-of select="@id" />
+                        </a>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="@id" />
+                    </xsl:otherwise>
+                </xsl:choose>
             </code>
         </dt>
     </xsl:template>
@@ -350,12 +378,19 @@
         <dt>
             <i class="bullet-removed">&#160;</i>
             <code>
-                <a>
-                    <xsl:attribute name="href">
-                        <xsl:value-of select="php:function('str_replace', '%line%', string(defn-source[@id = 'source']/@line), php:function('str_replace', '%file%', string(defn-source[@id = 'source']/@file), php:function('str_replace', '%commit%', string(/root/defn[@id = 'source']/defn[@id = 'commit']/diff-old/defn[@id = 'commit']/@value), string(/root/defn[@id = 'source']/@file-link))))" />
-                    </xsl:attribute>
-                    <xsl:value-of select="@id" />
-                </a>
+                <xsl:choose>
+                    <xsl:when test="/root/defn[@id = 'source']/@file-link">
+                        <a>
+                            <xsl:attribute name="href">
+                                <xsl:value-of select="php:function('str_replace', '%line%', string(defn-source[@id = 'source']/@line), php:function('str_replace', '%file%', string(defn-source[@id = 'source']/@file), php:function('str_replace', '%commit%', string(/root/defn[@id = 'source']/defn[@id = 'commit']/diff-old/defn[@id = 'commit']/@value), string(/root/defn[@id = 'source']/@file-link))))" />
+                            </xsl:attribute>
+                            <xsl:value-of select="@id" />
+                        </a>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="@id" />
+                    </xsl:otherwise>
+                </xsl:choose>
             </code>
         </dt>
     </xsl:template>
@@ -364,12 +399,19 @@
         <dt>
             <i class="bullet-added">&#160;</i>
             <code>
-                <a>
-                    <xsl:attribute name="href">
-                        <xsl:value-of select="php:function('str_replace', '%line%', string(defn-source[@id = 'source']/@line), php:function('str_replace', '%file%', string(defn-source[@id = 'source']/@file), php:function('str_replace', '%commit%', string(/root/defn[@id = 'source']/defn[@id = 'commit']/@value), string(/root/defn[@id = 'source']/@file-link))))" />
-                    </xsl:attribute>
-                    <xsl:value-of select="@id" />
-                </a>
+                <xsl:choose>
+                    <xsl:when test="/root/defn[@id = 'source']/@file-link">
+                        <a>
+                            <xsl:attribute name="href">
+                                <xsl:value-of select="php:function('str_replace', '%line%', string(defn-source[@id = 'source']/@line), php:function('str_replace', '%file%', string(defn-source[@id = 'source']/@file), php:function('str_replace', '%commit%', string(/root/defn[@id = 'source']/defn[@id = 'commit']/@value), string(/root/defn[@id = 'source']/@file-link))))" />
+                            </xsl:attribute>
+                            <xsl:value-of select="@id" />
+                        </a>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="@id" />
+                    </xsl:otherwise>
+                </xsl:choose>
             </code>
 
             <xsl:variable name="consts" select="count(const)" />
@@ -393,12 +435,19 @@
         <dt>
             <i class="bullet-removed">&#160;</i>
             <code>
-                <a>
-                    <xsl:attribute name="href">
-                        <xsl:value-of select="php:function('str_replace', '%line%', string(defn-source[@id = 'source']/@line), php:function('str_replace', '%file%', string(defn-source[@id = 'source']/@file), php:function('str_replace', '%commit%', string(/root/defn[@id = 'source']/defn[@id = 'commit']/diff-old/defn[@id = 'commit']/@value), string(/root/defn[@id = 'source']/@file-link))))" />
-                    </xsl:attribute>
-                    <xsl:value-of select="@id" />
-                </a>
+                <xsl:choose>
+                    <xsl:when test="/root/defn[@id = 'source']/@file-link">
+                        <a>
+                            <xsl:attribute name="href">
+                                <xsl:value-of select="php:function('str_replace', '%line%', string(defn-source[@id = 'source']/@line), php:function('str_replace', '%file%', string(defn-source[@id = 'source']/@file), php:function('str_replace', '%commit%', string(/root/defn[@id = 'source']/defn[@id = 'commit']/diff-old/defn[@id = 'commit']/@value), string(/root/defn[@id = 'source']/@file-link))))" />
+                            </xsl:attribute>
+                            <xsl:value-of select="@id" />
+                        </a>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="@id" />
+                    </xsl:otherwise>
+                </xsl:choose>
             </code>
 
             <xsl:variable name="consts" select="count(const)" />
@@ -422,12 +471,19 @@
         <dt>
             <i class="bullet-added">&#160;</i>
             <code>
-                <a>
-                    <xsl:attribute name="href">
-                        <xsl:value-of select="php:function('str_replace', '%line%', string(defn-source[@id = 'source']/@line), php:function('str_replace', '%file%', string(defn-source[@id = 'source']/@file), php:function('str_replace', '%commit%', string(/root/defn[@id = 'source']/defn[@id = 'commit']/@value), string(/root/defn[@id = 'source']/@file-link))))" />
-                    </xsl:attribute>
-                    <xsl:value-of select="@id" />
-                </a>
+                <xsl:choose>
+                    <xsl:when test="/root/defn[@id = 'source']/@file-link">
+                        <a>
+                            <xsl:attribute name="href">
+                                <xsl:value-of select="php:function('str_replace', '%line%', string(defn-source[@id = 'source']/@line), php:function('str_replace', '%file%', string(defn-source[@id = 'source']/@file), php:function('str_replace', '%commit%', string(/root/defn[@id = 'source']/defn[@id = 'commit']/@value), string(/root/defn[@id = 'source']/@file-link))))" />
+                            </xsl:attribute>
+                            <xsl:value-of select="@id" />
+                        </a>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="@id" />
+                    </xsl:otherwise>
+                </xsl:choose>
             </code>
 
             <xsl:variable name="consts" select="count(const)" />
@@ -451,12 +507,19 @@
         <dt>
             <i class="bullet-removed">&#160;</i>
             <code>
-                <a>
-                    <xsl:attribute name="href">
-                        <xsl:value-of select="php:function('str_replace', '%line%', string(defn-source[@id = 'source']/@line), php:function('str_replace', '%file%', string(defn-source[@id = 'source']/@file), php:function('str_replace', '%commit%', string(/root/defn[@id = 'source']/defn[@id = 'commit']/diff-old/defn[@id = 'commit']/@value), string(/root/defn[@id = 'source']/@file-link))))" />
-                    </xsl:attribute>
-                    <xsl:value-of select="@id" />
-                </a>
+                <xsl:choose>
+                    <xsl:when test="/root/defn[@id = 'source']/@file-link">
+                        <a>
+                            <xsl:attribute name="href">
+                                <xsl:value-of select="php:function('str_replace', '%line%', string(defn-source[@id = 'source']/@line), php:function('str_replace', '%file%', string(defn-source[@id = 'source']/@file), php:function('str_replace', '%commit%', string(/root/defn[@id = 'source']/defn[@id = 'commit']/diff-old/defn[@id = 'commit']/@value), string(/root/defn[@id = 'source']/@file-link))))" />
+                            </xsl:attribute>
+                            <xsl:value-of select="@id" />
+                        </a>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="@id" />
+                    </xsl:otherwise>
+                </xsl:choose>
             </code>
 
             <xsl:variable name="consts" select="count(const)" />
@@ -480,12 +543,19 @@
         <dt>
             <i class="bullet-added">&#160;</i>
             <code>
-                <a>
-                    <xsl:attribute name="href">
-                        <xsl:value-of select="php:function('str_replace', '%line%', string(defn-source[@id = 'source']/@line), php:function('str_replace', '%file%', string(defn-source[@id = 'source']/@file), php:function('str_replace', '%commit%', string(/root/defn[@id = 'source']/defn[@id = 'commit']/@value), string(/root/defn[@id = 'source']/@file-link))))" />
-                    </xsl:attribute>
-                    <xsl:value-of select="@id" />
-                </a>
+                <xsl:choose>
+                    <xsl:when test="/root/defn[@id = 'source']/@file-link">
+                        <a>
+                            <xsl:attribute name="href">
+                                <xsl:value-of select="php:function('str_replace', '%line%', string(defn-source[@id = 'source']/@line), php:function('str_replace', '%file%', string(defn-source[@id = 'source']/@file), php:function('str_replace', '%commit%', string(/root/defn[@id = 'source']/defn[@id = 'commit']/@value), string(/root/defn[@id = 'source']/@file-link))))" />
+                            </xsl:attribute>
+                            <xsl:value-of select="@id" />
+                        </a>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="@id" />
+                    </xsl:otherwise>
+                </xsl:choose>
             </code>
         </dt>
     </xsl:template>
@@ -494,12 +564,19 @@
         <dt>
             <i class="bullet-removed">&#160;</i>
             <code>
-                <a>
-                    <xsl:attribute name="href">
-                        <xsl:value-of select="php:function('str_replace', '%line%', string(defn-source[@id = 'source']/@line), php:function('str_replace', '%file%', string(defn-source[@id = 'source']/@file), php:function('str_replace', '%commit%', string(/root/defn[@id = 'source']/defn[@id = 'commit']/diff-old/defn[@id = 'commit']/@value), string(/root/defn[@id = 'source']/@file-link))))" />
-                    </xsl:attribute>
-                    <xsl:value-of select="@id" />
-                </a>
+                <xsl:choose>
+                    <xsl:when test="/root/defn[@id = 'source']/@file-link">
+                        <a>
+                            <xsl:attribute name="href">
+                                <xsl:value-of select="php:function('str_replace', '%line%', string(defn-source[@id = 'source']/@line), php:function('str_replace', '%file%', string(defn-source[@id = 'source']/@file), php:function('str_replace', '%commit%', string(/root/defn[@id = 'source']/defn[@id = 'commit']/diff-old/defn[@id = 'commit']/@value), string(/root/defn[@id = 'source']/@file-link))))" />
+                            </xsl:attribute>
+                            <xsl:value-of select="@id" />
+                        </a>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="@id" />
+                    </xsl:otherwise>
+                </xsl:choose>
             </code>
         </dt>
     </xsl:template>
@@ -508,12 +585,19 @@
         <dt>
             <i class="bullet-touched">&#160;</i>
             <code>
-                <a>
-                    <xsl:attribute name="href">
-                        <xsl:value-of select="php:function('str_replace', '%line%', string(defn-source[@id = 'source']/@line), php:function('str_replace', '%file%', string(defn-source[@id = 'source']/@file), php:function('str_replace', '%commit%', string(/root/defn[@id = 'source']/defn[@id = 'commit']/@value), string(/root/defn[@id = 'source']/@file-link))))" />
-                    </xsl:attribute>
-                    <xsl:value-of select="@id" />
-                </a>
+                <xsl:choose>
+                    <xsl:when test="/root/defn[@id = 'source']/@file-link">
+                        <a>
+                            <xsl:attribute name="href">
+                                <xsl:value-of select="php:function('str_replace', '%line%', string(defn-source[@id = 'source']/@line), php:function('str_replace', '%file%', string(defn-source[@id = 'source']/@file), php:function('str_replace', '%commit%', string(/root/defn[@id = 'source']/defn[@id = 'commit']/@value), string(/root/defn[@id = 'source']/@file-link))))" />
+                            </xsl:attribute>
+                            <xsl:value-of select="@id" />
+                        </a>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="@id" />
+                    </xsl:otherwise>
+                </xsl:choose>
             </code>
     
             <xsl:variable name="attr_changed" select="count(attr[@diff = 'changed'])" />
@@ -554,12 +638,19 @@
         <dt>
             <i class="bullet-touched">&#160;</i>
             <code>
-                <a>
-                    <xsl:attribute name="href">
-                        <xsl:value-of select="php:function('str_replace', '%line%', string(defn-source[@id = 'source']/@line), php:function('str_replace', '%file%', string(defn-source[@id = 'source']/@file), php:function('str_replace', '%commit%', string(/root/defn[@id = 'source']/defn[@id = 'commit']/@value), string(/root/defn[@id = 'source']/@file-link))))" />
-                    </xsl:attribute>
-                    <xsl:value-of select="@id" />
-                </a>
+                <xsl:choose>
+                    <xsl:when test="/root/defn[@id = 'source']/@file-link">
+                        <a>
+                            <xsl:attribute name="href">
+                                <xsl:value-of select="php:function('str_replace', '%line%', string(defn-source[@id = 'source']/@line), php:function('str_replace', '%file%', string(defn-source[@id = 'source']/@file), php:function('str_replace', '%commit%', string(/root/defn[@id = 'source']/defn[@id = 'commit']/@value), string(/root/defn[@id = 'source']/@file-link))))" />
+                            </xsl:attribute>
+                            <xsl:value-of select="@id" />
+                        </a>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="@id" />
+                    </xsl:otherwise>
+                </xsl:choose>
             </code>
         </dt>
 

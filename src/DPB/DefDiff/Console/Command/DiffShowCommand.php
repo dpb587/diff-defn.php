@@ -32,37 +32,46 @@ class DiffShowCommand extends Command
         $mt = microtime(true);
 
         $inputRepository = $input->getArgument('repository');
-        $inputCommitStart = $input->getArgument('commit-final');
-        $inputCommitEnd = $input->getArgument('commit-begin');
+        $inputCommitBegin = $input->getArgument('commit-final');
+        $inputCommitFinal = $input->getArgument('commit-begin');
 
         $repoFactory = new \DPB\DefDiff\Repository\Factory();
 
         $repo = $repoFactory->create($inputRepository);
 
-        $inputCommitStart = $repo->resolveCommit($inputCommitStart);
-        $inputCommitEnd = $repo->resolveCommit($inputCommitEnd);
+        $inputCommitBegin = $repo->resolveCommit($inputCommitBegin);
+        $inputCommitFinal = $repo->resolveCommit($inputCommitFinal);
 
-        $output->writeln(sprintf('Comparing <info>%s</info> to <info>%s</info>', $inputCommitStart, $inputCommitEnd));
+        $output->writeln(sprintf('Comparing <info>%s</info> to <info>%s</info>', $inputCommitBegin[0], $inputCommitFinal[0]));
 
-        $diffs = $repo->getChangedFiles($inputCommitStart, $inputCommitEnd);
+        $diffs = $repo->getChangedFiles($inputCommitBegin[0], $inputCommitFinal[0]);
 
         $output->writeln('Found ' . count($diffs) . ' changed file' . (1 != count($diffs) ? 's' : ''));
 
-        $defnRepository = new DefnDefinition(
-            'source',
-            array(
-                'repository' => $inputRepository,
-                'repository-link' => $repo->getLink($inputRepository),
-                'file-link' => $repo->getFileLink($inputRepository),
-                'commit-link' => $repo->getCommitLink($inputRepository)
-            )
+        $links = $repo->getLinks();
+        $attrs = array(
+            'repository' => $inputRepository,
         );
 
+        if (isset($links['web'])) {
+            $attrs['repository-link'] = $links['web'];
+        }
+
+        if (isset($links['file'])) {
+            $attrs['file-link'] = $links['file'];
+        }
+
+        if (isset($links['commit'])) {
+            $attrs['commit-link'] = $links['commit'];
+        }
+
+        $defnRepository = new DefnDefinition('source', $attrs);
+
         $finalScope = new RootDefinition('root');
-        $finalScope->assert($defnRepository)->assert(new DefnDefinition('commit'))->setAttribute('value', $inputCommitStart);
+        $finalScope->assert($defnRepository)->assert(new DefnDefinition('commit', array('value' => $inputCommitBegin[0], 'friendly' => $inputCommitBegin[1])));
         
         $beginScope = new RootDefinition('root');
-        $beginScope->assert($defnRepository)->assert(new DefnDefinition('commit'))->setAttribute('value', $inputCommitEnd);
+        $beginScope->assert($defnRepository)->assert(new DefnDefinition('commit', array('value' => $inputCommitFinal[0], 'friendly' => $inputCommitFinal[1])));
 
         foreach ($diffs as $file) {
             $finalScope->setAttribute('file', $file);

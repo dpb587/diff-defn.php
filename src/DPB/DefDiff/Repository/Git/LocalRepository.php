@@ -47,10 +47,22 @@ class LocalRepository
             throw new \InvalidArgumentException(sprintf('Unable to resolve commit "%s".', $commit));
         }
 
-        return trim($p->getOutput());
+        $absolute = trim($p->getOutput());
+
+        $p = new Process(
+            'git describe --tags ' . escapeshellarg($absolute),
+            $this->url
+        );
+        $p->run();
+
+        if ($p->getOutput()) {
+            return array($absolute, trim($p->getOutput()));
+        }
+
+        return array($absolute, substr($absolute, 0, 10));
     }
 
-    public function getFileLink()
+    public function getLinks()
     {
         $p = new Process(
             'git remote -v',
@@ -62,42 +74,14 @@ class LocalRepository
 
         if ($match) {
             if (preg_match('#(git|ssh)://github.com/([^/]+/[^/]+)#', $match[1], $match)) {
-                return 'https://github.com/' . preg_replace('#\.git$#', '', $match[2]) . '/blob/%commit%/%file%#L%line%';
+                return array(
+                    'web' => 'https://github.com/' . preg_replace('#\.git$#', '', $match[2]) . '/',
+                    'file' => 'https://github.com/' . preg_replace('#\.git$#', '', $match[2]) . '/blob/%commit%/%file%#L%line%',
+                    'commit' => 'https://github.com/' . preg_replace('#\.git$#', '', $match[2]) . '/tree/%commit%',
+                );
             }
         }
-    }
 
-    public function getCommitLink($repository)
-    {
-        $p = new Process(
-            'git remote -v',
-            $this->url
-        );
-        $p->run();
-
-        preg_match('#^origin\s+(.*)\s+\(fetch\)#', $p->getOutput(), $match);
-
-        if ($match) {
-            if (preg_match('#(git|ssh)://github.com/([^/]+/[^/]+)#', $match[1], $match)) {
-                return 'https://github.com/' . preg_replace('#\.git$#', '', $match[2]) . '/tree/%commit%';
-            }
-        }
-    }
-
-    public function getLink($repository)
-    {
-        $p = new Process(
-            'git remote -v',
-            $this->url
-        );
-        $p->run();
-
-        preg_match('#^origin\s+(.*)\s+\(fetch\)#', $p->getOutput(), $match);
-
-        if ($match) {
-            if (preg_match('#(git|ssh)://github.com/([^/]+/[^/]+)#', $match[1], $match)) {
-                return 'https://github.com/' . preg_replace('#\.git$#', '', $match[2]) . '/';
-            }
-        }
+        return array();
     }
 }
