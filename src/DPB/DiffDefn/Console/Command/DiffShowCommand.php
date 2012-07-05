@@ -22,6 +22,7 @@ class DiffShowCommand extends Command
             ->addArgument('repository', InputArgument::REQUIRED, 'Repository')
             ->addArgument('commit-final', InputArgument::REQUIRED, 'Commit (final)')
             ->addArgument('commit-begin', InputArgument::REQUIRED, 'Commit (begin)')
+            ->addOption('exclude', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Exclude pattern', null)
             ->addOption('stylesheet', null, InputOption::VALUE_REQUIRED, 'Stylesheet for output', null)
             ->addOption('output', null, InputOption::VALUE_REQUIRED, 'Output transformed file', '-')
         ;
@@ -34,6 +35,7 @@ class DiffShowCommand extends Command
         $inputRepository = $input->getArgument('repository');
         $inputCommitBegin = $input->getArgument('commit-final');
         $inputCommitFinal = $input->getArgument('commit-begin');
+        $inputExclude = $input->getOption('exclude');
 
         $repoFactory = new \DPB\DiffDefn\Repository\Factory();
 
@@ -83,6 +85,14 @@ class DiffShowCommand extends Command
                 $output->writeln('skipped');
 
                 continue;
+            }
+
+            foreach ($inputExclude as $exclude) {
+                if (preg_match('%' . $exclude . '%', $file)) {
+                    $output->writeln('skipped');
+
+                    continue 2;
+                }
             }
 
             try {
