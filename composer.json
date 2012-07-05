@@ -13,7 +13,7 @@
     },
     "autoload" : {
         "psr-0" : {
-            "DPB\\DefnDiff" : "src/"
+            "DPB\\DiffDefn" : "src/"
         }
     }
 }

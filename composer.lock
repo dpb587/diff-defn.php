@@ -1,5 +1,5 @@
 {
-    "hash": "ce97991753fdf2a3508c98386714fa1f",
+    "hash": "cf7207225bbb52d5cd931c2dda012fdd",
     "packages": [
         {
             "package": "nikic/php-parser",
@@ -16,20 +16,8 @@
         {
             "package": "symfony/process",
             "version": "dev-master",
-            "alias-pretty-version": "2.1.x-dev",
-            "alias-version": "2.1.9999999.9999999-dev"
-        },
-        {
-            "package": "symfony/process",
-            "version": "dev-master",
             "source-reference": "abbb6c9a4fcbd070af4e6296753d449dcd4723aa",
             "commit-date": "1341334717"
-        },
-        {
-            "package": "symfony/yaml",
-            "version": "dev-master",
-            "alias-pretty-version": "2.1.x-dev",
-            "alias-version": "2.1.9999999.9999999-dev"
         },
         {
             "package": "symfony/yaml",
