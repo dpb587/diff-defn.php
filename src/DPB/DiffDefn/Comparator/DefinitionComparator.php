@@ -46,14 +46,14 @@ class DefinitionComparator
                     $c->assert($sub);
                 }
             } else {
-                $sub = $c->assert($sub);
+                $sub = $c->assert($this->recursiveDiff($sub, 'added'));
                 $sub->setAttribute('diff', 'added');
             }
         }
 
         foreach ($b as $sub) {
             if (!$a->has($sub)) {
-                $sub = $c->assert($sub);
+                $sub = $c->assert($this->recursiveDiff($sub, 'removed'));
                 $sub->setAttribute('diff', 'removed');
             }
         }
@@ -65,5 +65,14 @@ class DefinitionComparator
         }
 
         return null;
+    }
+
+    public function recursiveDiff(Definition $node, $diff)
+    {
+        foreach ($node as $sub) {
+            $sub->setAttribute('diff', $diff);
+        }
+
+        return $node;
     }
 }

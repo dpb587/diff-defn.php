@@ -140,7 +140,7 @@
                         padding: 12px 12px 16px;
                     }
 
-                    small {
+                    small, small a {
                         color: #999999;
                     }
                 </style>
@@ -365,6 +365,27 @@
                     </p>
                 </footer>
             </body>
+
+            <script src="https://ajax.googleapis.com/ajax/libs/mootools/1.4.5/mootools-yui-compressed.js" type="text/javascript"></script>
+            <script type="text/javascript">
+                window.addEvent('domready', function() {
+                    $$('a.dd-more').addEvent(
+                        'click',
+                        function (e) {
+                            e.preventDefault();
+
+                            var t = ('expand' == $(this).get('text')) ? 'collapse' : 'expand';
+                            var s = ('expand' == t) ? 'none' : 'block';
+
+                            var d = $(this).set('text', t).getParent('dt');
+
+                            while ('DD' == (d = d.getNext()).nodeName) {
+                                d.setStyle('display', s);
+                            }
+                        }
+                    );
+                });
+            </script>
         </html>
     </xsl:template>
 
@@ -518,9 +539,12 @@
         </dt>
     </xsl:template>
 
-    <xsl:template match="//class[@diff = 'added']">
+    <xsl:template match="//function[@diff = 'added' or @diff = 'removed']">
         <dt>
-            <i class="bullet-added">&#160;</i>
+            <i>
+                <xsl:attribute name="class">bullet-<xsl:value-of select="@diff" /></xsl:attribute>
+                &#160;
+            </i>
             <code>
                 <xsl:choose>
                     <xsl:when test="/root/defn[@id = 'source']/@file-link">
@@ -537,98 +561,15 @@
                 </xsl:choose>
             </code>
 
-            <xsl:variable name="consts" select="count(const)" />
-            <xsl:variable name="functions" select="count(function)" />
-
-            <xsl:if test="$consts or $functions">
-                <small>
-                    &#8211;
-                    <xsl:if test="$consts">
-                        <xsl:value-of select="$consts" /> constant<xsl:if test="$consts &gt; 1">s</xsl:if><xsl:if test="$functions">, </xsl:if>
-                    </xsl:if>
-                    <xsl:if test="$functions">
-                        <xsl:value-of select="$functions" /> function<xsl:if test="$functions &gt; 1">s</xsl:if>
-                    </xsl:if>
-                </small>
+            <xsl:variable name="c_attr" select="count(attr)" />
+    
+            <xsl:if test="$c_attr">
+                &#8211;
+                <xsl:for-each select="attr">
+                    <xsl:if test="position() &gt; 1">, </xsl:if>
+                    <xsl:apply-templates select="." />
+                </xsl:for-each>
             </xsl:if>
-        </dt>
-    </xsl:template>
-
-    <xsl:template match="//class[@diff = 'removed']">
-        <dt>
-            <i class="bullet-removed">&#160;</i>
-            <code>
-                <xsl:choose>
-                    <xsl:when test="/root/defn[@id = 'source']/@file-link">
-                        <a>
-                            <xsl:attribute name="href">
-                                <xsl:value-of select="php:function('str_replace', '%line%', string(defn-source[@id = 'source']/@line), php:function('str_replace', '%file%', string(defn-source[@id = 'source']/@file), php:function('str_replace', '%commit%', string(/root/defn[@id = 'source']/defn[@id = 'commit']/diff-old/defn[@id = 'commit']/@value), string(/root/defn[@id = 'source']/@file-link))))" />
-                            </xsl:attribute>
-                            <xsl:value-of select="@id" />
-                        </a>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="@id" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </code>
-
-            <xsl:variable name="consts" select="count(const)" />
-            <xsl:variable name="functions" select="count(function)" />
-
-            <xsl:if test="$consts or $functions">
-                <small>
-                    &#8211;
-                    <xsl:if test="$consts">
-                        <xsl:value-of select="$consts" /> constant<xsl:if test="$consts &gt; 1">s</xsl:if><xsl:if test="$functions">, </xsl:if>
-                    </xsl:if>
-                    <xsl:if test="$functions">
-                        <xsl:value-of select="$functions" /> function<xsl:if test="$functions &gt; 1">s</xsl:if>
-                    </xsl:if>
-                </small>
-            </xsl:if>
-        </dt>
-    </xsl:template>
-
-    <xsl:template match="//function[@diff = 'added']">
-        <dt>
-            <i class="bullet-added">&#160;</i>
-            <code>
-                <xsl:choose>
-                    <xsl:when test="/root/defn[@id = 'source']/@file-link">
-                        <a>
-                            <xsl:attribute name="href">
-                                <xsl:value-of select="php:function('str_replace', '%line%', string(defn-source[@id = 'source']/@line), php:function('str_replace', '%file%', string(defn-source[@id = 'source']/@file), php:function('str_replace', '%commit%', string(/root/defn[@id = 'source']/defn[@id = 'commit']/@value), string(/root/defn[@id = 'source']/@file-link))))" />
-                            </xsl:attribute>
-                            <xsl:value-of select="@id" />
-                        </a>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="@id" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </code>
-        </dt>
-    </xsl:template>
-
-    <xsl:template match="//function[@diff = 'removed']">
-        <dt>
-            <i class="bullet-removed">&#160;</i>
-            <code>
-                <xsl:choose>
-                    <xsl:when test="/root/defn[@id = 'source']/@file-link">
-                        <a>
-                            <xsl:attribute name="href">
-                                <xsl:value-of select="php:function('str_replace', '%line%', string(defn-source[@id = 'source']/@line), php:function('str_replace', '%file%', string(defn-source[@id = 'source']/@file), php:function('str_replace', '%commit%', string(/root/defn[@id = 'source']/defn[@id = 'commit']/diff-old/defn[@id = 'commit']/@value), string(/root/defn[@id = 'source']/@file-link))))" />
-                            </xsl:attribute>
-                            <xsl:value-of select="@id" />
-                        </a>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="@id" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </code>
         </dt>
     </xsl:template>
 
@@ -685,9 +626,12 @@
         </li>
     </xsl:template>
 
-    <xsl:template match="//class[@diff = 'touched']">
+    <xsl:template match="//class-property">
         <dt>
-            <i class="bullet-touched">&#160;</i>
+            <i>
+                <xsl:attribute name="class">bullet-<xsl:value-of select="@diff" /></xsl:attribute>
+                &#160;
+            </i>
             <code>
                 <xsl:choose>
                     <xsl:when test="/root/defn[@id = 'source']/@file-link">
@@ -703,34 +647,121 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </code>
+
+            <xsl:variable name="c_attr" select="count(attr)" />
+    
+            <xsl:if test="$c_attr">
+                &#8211;
+                <xsl:for-each select="attr">
+                    <xsl:if test="position() &gt; 1">, </xsl:if>
+                    <xsl:apply-templates select="." />
+                </xsl:for-each>
+            </xsl:if>
+        </dt>
+    </xsl:template>
+
+    <xsl:template match="//class">
+        <xsl:variable name="v_more_text">
+            <xsl:choose>
+                <xsl:when test="@diff = 'added'">expand</xsl:when>
+                <xsl:when test="@diff = 'removed'">expand</xsl:when>
+                <xsl:otherwise>collapse</xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="v_more_style">
+            <xsl:choose>
+                <xsl:when test="@diff = 'added'">display:none;</xsl:when>
+                <xsl:when test="@diff = 'removed'">display:none;</xsl:when>
+                <xsl:otherwise>display:block;</xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+
+        <xsl:variable name="c_attr" select="count(attr)" />
+
+        <xsl:variable name="c_extends" select="count(class-extends)" />
+        <xsl:variable name="c_extends_added" select="count(class-extends[@diff = 'added'])" />
+        <xsl:variable name="c_extends_removed" select="count(class-extends[@diff = 'removed'])" />
+
+        <xsl:variable name="c_implements" select="count(class-implements)" />
+        <xsl:variable name="c_implements_added" select="count(class-implements[@diff = 'added'])" />
+        <xsl:variable name="c_implements_removed" select="count(class-implements[@diff = 'removed'])" />
+
+        <xsl:variable name="c_const" select="count(const)" />
+        <xsl:variable name="c_const_add" select="count(const[@diff = 'added'])" />
+        <xsl:variable name="c_const_removed" select="count(const[@diff = 'removed'])" />
+        <xsl:variable name="c_const_touched" select="count(const[@diff = 'touched'])" />
+
+        <xsl:variable name="c_property" select="count(class-property)" />
+        <xsl:variable name="c_property_add" select="count(class-property[@diff = 'added'])" />
+        <xsl:variable name="c_property_removed" select="count(class-property[@diff = 'removed'])" />
+        <xsl:variable name="c_property_touched" select="count(class-property[@diff = 'touched'])" />
+
+        <xsl:variable name="c_function" select="count(function)" />
+        <xsl:variable name="c_function_add" select="count(function[@diff = 'added'])" />
+        <xsl:variable name="c_function_removed" select="count(function[@diff = 'removed'])" />
+        <xsl:variable name="c_function_touched" select="count(function[@diff = 'touched'])" />
+
+        <dt>
+            <i>
+                <xsl:attribute name="class">bullet-<xsl:value-of select="@diff" /></xsl:attribute>
+                &#160;
+            </i>
+            <code>
+                <xsl:choose>
+                    <xsl:when test="/root/defn[@id = 'source']/@file-link">
+                        <a>
+                            <xsl:attribute name="href">
+                                <xsl:value-of select="php:function('str_replace', '%line%', string(defn-source[@id = 'source']/@line), php:function('str_replace', '%file%', string(defn-source[@id = 'source']/@file), php:function('str_replace', '%commit%', string(/root/defn[@id = 'source']/defn[@id = 'commit']/@value), string(/root/defn[@id = 'source']/@file-link))))" />
+                            </xsl:attribute>
+                            <xsl:value-of select="@id" />
+                        </a>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="@id" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </code>
+            <xsl:if test="(@diff = 'added' or @diff = 'removed') and ($c_const or $c_function)">
+                <small>
+                    &#8211;
+                    <xsl:if test="$c_const">
+                        <xsl:value-of select="$c_const" /> constant<xsl:if test="$c_const &gt; 1">s</xsl:if><xsl:if test="$c_property or $c_function">, </xsl:if>
+                    </xsl:if>
+                    <xsl:if test="$c_property">
+                        <xsl:value-of select="$c_property" /> propert<xsl:choose><xsl:when test="$c_property &gt; 1">ies</xsl:when><xsl:otherwise>y</xsl:otherwise></xsl:choose><xsl:if test="$c_property or $c_function">, </xsl:if>
+                    </xsl:if>
+                    <xsl:if test="$c_function">
+                        <xsl:value-of select="$c_function" /> function<xsl:if test="$c_function &gt; 1">s</xsl:if>
+                    </xsl:if>
+                    &#8211;
+                    <a class="dd-more" href="#"><xsl:value-of select="$v_more_text" /></a>
+                </small>
+            </xsl:if>
         </dt>
 
-        <xsl:variable name="attr" select="count(attr)" />
-
-        <xsl:if test="$attr">
-            <dd>
+        <xsl:if test="$c_attr">
+            <dd class="dd-more">
+                <xsl:attribute name="style"><xsl:value-of select="$v_more_style" /></xsl:attribute>
                 <xsl:apply-templates select="attr" />
             </dd>
         </xsl:if>
 
-        <xsl:variable name="extends_added" select="count(class-extends[@diff = 'added'])" />
-        <xsl:variable name="extends_removed" select="count(class-extends[@diff = 'removed'])" />
-
-        <xsl:if test="$extends_added or $extends_removed">
-            <dd>
+        <xsl:if test="$c_extends">
+            <dd class="dd-more">
+                <xsl:attribute name="style"><xsl:value-of select="$v_more_style" /></xsl:attribute>
                 <dl>
                     <dt>
                         <h3>
                             Extends
                             <small>
                                 &#8212;
-                                <xsl:if test="$extends_added">
-                                    <xsl:value-of select="$extends_added" />
-                                    added<xsl:if test="$extends_removed">, </xsl:if>
+                                <xsl:if test="$c_extends_removed">
+                                    <xsl:value-of select="$c_extends_removed" />
+                                    removed<xsl:if test="$c_extends_added">, </xsl:if>
                                 </xsl:if>
-                                <xsl:if test="$extends_removed">
-                                    <xsl:value-of select="$extends_removed" />
-                                    removed
+                                <xsl:if test="$c_extends_added">
+                                    <xsl:value-of select="$c_extends_added" />
+                                    added
                                 </xsl:if>
                             </small>
                         </h3>
@@ -738,10 +769,10 @@
     
                     <dd>
                         <dl>
-                            <xsl:apply-templates select="class-extends[@diff = 'added']">
+                            <xsl:apply-templates select="class-extends[@diff = 'removed']">
                                 <xsl:sort select="@id" />
                             </xsl:apply-templates>
-                            <xsl:apply-templates select="class-extends[@diff = 'removed']">
+                            <xsl:apply-templates select="class-extends[@diff = 'added']">
                                 <xsl:sort select="@id" />
                             </xsl:apply-templates>
                         </dl>
@@ -749,24 +780,22 @@
                 </dl>
             </dd>
         </xsl:if>
-
-        <xsl:variable name="implements_added" select="count(class-implements[@diff = 'added'])" />
-        <xsl:variable name="implements_removed" select="count(class-implements[@diff = 'removed'])" />
         
-        <xsl:if test="$implements_added or $implements_removed">
-            <dd>
+        <xsl:if test="$c_implements">
+            <dd class="dd-more">
+                <xsl:attribute name="style"><xsl:value-of select="$v_more_style" /></xsl:attribute>
                 <dl>
                     <dt>
                         <h3>
                             Implements
                             <small>
                                 &#8212;
-                                <xsl:if test="$implements_added">
-                                    <xsl:value-of select="$implements_added" />
-                                    added<xsl:if test="$implements_removed">, </xsl:if>
+                                <xsl:if test="$c_implements_added">
+                                    <xsl:value-of select="$c_implements_added" />
+                                    added<xsl:if test="$c_implements_removed">, </xsl:if>
                                 </xsl:if>
-                                <xsl:if test="$implements_removed">
-                                    <xsl:value-of select="$implements_removed" />
+                                <xsl:if test="$c_implements_removed">
+                                    <xsl:value-of select="$c_implements_removed" />
                                     removed
                                 </xsl:if>
                             </small>
@@ -786,29 +815,26 @@
                 </dl>
             </dd>
         </xsl:if>
-
-        <xsl:variable name="const_add" select="count(const[@diff = 'added'])" />
-        <xsl:variable name="const_removed" select="count(const[@diff = 'removed'])" />
-        <xsl:variable name="const_touched" select="count(const[@diff = 'touched'])" />
         
-        <xsl:if test="$const_add or $const_touched or $const_removed">
-            <dd>
+        <xsl:if test="$c_const">
+            <dd class="dd-more">
+                <xsl:attribute name="style"><xsl:value-of select="$v_more_style" /></xsl:attribute>
                 <dl>
                     <dt>
                         <h3>
                             Constants
                             <small>
                                 &#8212;
-                                <xsl:if test="$const_add">
-                                    <xsl:value-of select="$const_add" />
-                                    added<xsl:if test="$const_removed or $const_touched">, </xsl:if>
+                                <xsl:if test="$c_const_add">
+                                    <xsl:value-of select="$c_const_add" />
+                                    added<xsl:if test="$c_const_removed or $c_const_touched">, </xsl:if>
                                 </xsl:if>
-                                <xsl:if test="$const_removed">
-                                    <xsl:value-of select="$const_removed" />
-                                    removed<xsl:if test="$const_touched">, </xsl:if>
+                                <xsl:if test="$c_const_removed">
+                                    <xsl:value-of select="$c_const_removed" />
+                                    removed<xsl:if test="$c_const_touched">, </xsl:if>
                                 </xsl:if>
-                                <xsl:if test="$const_touched">
-                                    <xsl:value-of select="$const_touched" />
+                                <xsl:if test="$c_const_touched">
+                                    <xsl:value-of select="$c_const_touched" />
                                     touched
                                 </xsl:if>
                             </small>
@@ -831,29 +857,68 @@
                 </dl>
             </dd>
         </xsl:if>
-
-        <xsl:variable name="function_add" select="count(function[@diff = 'added'])" />
-        <xsl:variable name="function_removed" select="count(function[@diff = 'removed'])" />
-        <xsl:variable name="function_touched" select="count(function[@diff = 'touched'])" />
         
-        <xsl:if test="$function_add or $function_touched or $function_removed">
-            <dd>
+        <xsl:if test="$c_property">
+            <dd class="dd-more">
+                <xsl:attribute name="style"><xsl:value-of select="$v_more_style" /></xsl:attribute>
+                <dl>
+                    <dt>
+                        <h3>
+                            Properties
+                            <small>
+                                &#8212;
+                                <xsl:if test="$c_property_add">
+                                    <xsl:value-of select="$c_property_add" />
+                                    added<xsl:if test="$c_property_removed or $c_property_touched">, </xsl:if>
+                                </xsl:if>
+                                <xsl:if test="$c_property_removed">
+                                    <xsl:value-of select="$c_property_removed" />
+                                    removed<xsl:if test="$c_property_touched">, </xsl:if>
+                                </xsl:if>
+                                <xsl:if test="$c_property_touched">
+                                    <xsl:value-of select="$c_property_touched" />
+                                    touched
+                                </xsl:if>
+                            </small>
+                        </h3>
+                    </dt>
+    
+                    <dd>
+                        <dl>
+                            <xsl:apply-templates select="class-property[@diff = 'added']">
+                                <xsl:sort select="@id" />
+                            </xsl:apply-templates>
+                            <xsl:apply-templates select="class-property[@diff = 'removed']">
+                                <xsl:sort select="@id" />
+                            </xsl:apply-templates>
+                            <xsl:apply-templates select="class-property[@diff = 'touched']">
+                                <xsl:sort select="@id" />
+                            </xsl:apply-templates>
+                        </dl>
+                    </dd>
+                </dl>
+            </dd>
+        </xsl:if>
+        
+        <xsl:if test="$c_function">
+            <dd class="dd-more">
+                <xsl:attribute name="style"><xsl:value-of select="$v_more_style" /></xsl:attribute>
                 <dl>
                     <dt>
                         <h3>
                             Functions
                             <small>
                                 &#8212;
-                                <xsl:if test="$function_add">
-                                    <xsl:value-of select="$function_add" />
-                                    added<xsl:if test="$function_removed or $function_touched">, </xsl:if>
+                                <xsl:if test="$c_function_add">
+                                    <xsl:value-of select="$c_function_add" />
+                                    added<xsl:if test="$c_function_removed or $c_function_touched">, </xsl:if>
                                 </xsl:if>
-                                <xsl:if test="$function_removed">
-                                    <xsl:value-of select="$function_removed" />
-                                    removed<xsl:if test="$function_touched">, </xsl:if>
+                                <xsl:if test="$c_function_removed">
+                                    <xsl:value-of select="$c_function_removed" />
+                                    removed<xsl:if test="$c_function_touched">, </xsl:if>
                                 </xsl:if>
-                                <xsl:if test="$function_touched">
-                                    <xsl:value-of select="$function_touched" />
+                                <xsl:if test="$c_function_touched">
+                                    <xsl:value-of select="$c_function_touched" />
                                     touched
                                 </xsl:if>
                             </small>
@@ -897,6 +962,22 @@
                 <code><xsl:value-of select="@value" /></code>
                 (from
                 <code><xsl:value-of select="diff-old/attr/@value" /></code>)
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <xsl:template match="attr">
+        <xsl:choose>
+            <xsl:when test="@value = 'true'">
+                <code><xsl:value-of select="@id" /></code>
+            </xsl:when>
+            <xsl:when test="@value = 'false'">
+                not <code><xsl:value-of select="@id" /></code>
+            </xsl:when>
+            <xsl:otherwise>
+                <code><xsl:value-of select="@id" /></code>
+                is
+                <code><xsl:value-of select="@value" /></code>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>

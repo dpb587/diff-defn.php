@@ -18,6 +18,7 @@ class Processor
         $traverser->addVisitor(new \DPB\DiffDefn\Scanner\ClassFunctionScanner($scope));
         $traverser->addVisitor(new \DPB\DiffDefn\Scanner\ClassFunctionParamScanner($scope));
         $traverser->addVisitor(new \DPB\DiffDefn\Scanner\ClassImplementsScanner($scope));
+        $traverser->addVisitor(new \DPB\DiffDefn\Scanner\ClassPropertyScanner($scope));
         $traverser->addVisitor(new \DPB\DiffDefn\Scanner\ConstScanner($scope));
         $traverser->addVisitor(new \DPB\DiffDefn\Scanner\FunctionScanner($scope));
         $traverser->addVisitor(new \DPB\DiffDefn\Scanner\FunctionParamScanner($scope));
