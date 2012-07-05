@@ -97,6 +97,12 @@
                         font-size: 14px;
                     }
 
+                    h4 {
+                        color: #333333;
+                        font-size: 12px;
+                        padding-top: 1px;
+                    }
+
                     header {
                         border-bottom: #C9C9C9 solid 1px;
                         padding: 14px 12px;
@@ -600,30 +606,35 @@
             </xsl:if>
         </dt>
 
-        <xsl:variable name="param_touched" select="count(function-param[@diff = 'touched' or @diff = 'touched'])" />
-
-        <xsl:if test="$param_touched">
+        <xsl:if test="count(function-param[@diff = 'touched'])">
             <dd>
-                params touched:<br />
-    
-                <ul>
-                    <xsl:apply-templates select="function-param" />
-                </ul>
+                <dl>
+                    <dt>
+                        <h4>Parameters</h4>
+                    </dt>
+                    <dd>
+                        <dl>
+                            <xsl:apply-templates select="function-param" />
+                        </dl>
+                    </dd>
+                </dl>
             </dd>
         </xsl:if>
     </xsl:template>
 
     <xsl:template match="//function-param">
-        <li>
+        <dt>
+            <i>
+                <xsl:attribute name="class">bullet-<xsl:value-of select="@diff" /></xsl:attribute>
+                &#160;
+            </i>
             <code><xsl:value-of select="@id" /></code>
 
-            <xsl:variable name="attr_touched" select="count(attr[@diff = 'changed'])" />
-    
-            <xsl:if test="$attr_touched">
+            <xsl:if test="count(attr[@diff = 'changed'])">
                 &#8211;
                 <xsl:apply-templates select="attr[@diff = 'changed']" />
             </xsl:if>
-        </li>
+        </dt>
     </xsl:template>
 
     <xsl:template match="//class-property">
