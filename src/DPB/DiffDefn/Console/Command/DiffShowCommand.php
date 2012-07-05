@@ -30,7 +30,7 @@ class DiffShowCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $mt = microtime(true);
-
+#/*
         $inputRepository = $input->getArgument('repository');
         $inputCommitBegin = $input->getArgument('commit-final');
         $inputCommitFinal = $input->getArgument('commit-begin');
@@ -124,6 +124,8 @@ class DiffShowCommand extends Command
         $diff = $dumper->dump($comparator->compare($finalScope, $beginScope));
 
         file_put_contents('/tmp/defdiff-diff.xml', $diff);
+#*/
+$diff = file_get_contents('/tmp/defdiff-diff.xml');
 
         $xsl = new \DOMDocument();
         $xsl->load($input->getOption('stylesheet') ?: (__DIR__ . '/../../Resources/xsl/default.xsl'));

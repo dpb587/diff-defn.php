@@ -53,8 +53,8 @@ class DefinitionComparator
 
         foreach ($b as $sub) {
             if (!$a->has($sub)) {
-                $sub = $c->assert($this->recursiveDiff($sub, 'removed'));
-                $sub->setAttribute('diff', 'removed');
+                $sub = $c->assert($this->recursiveDiff($sub, 'deleted'));
+                $sub->setAttribute('diff', 'deleted');
             }
         }
 
