@@ -3,8 +3,6 @@
 namespace DPB\DiffDefn\Comparator;
 
 use DPB\DiffDefn\Definition\Definition;
-use DPB\DiffDefn\Definition\DiffDefinition;
-use DPB\DiffDefn\Definition\DiffNewDefinition;
 use DPB\DiffDefn\Definition\DiffOldDefinition;
 
 class DefinitionComparator
@@ -60,7 +58,7 @@ class DefinitionComparator
 
         if ($c->hasAttribute('diff')) {
             return $c;
-        } else if (0 == $depth) {
+        } elseif (0 == $depth) {
             return $c;
         }
 

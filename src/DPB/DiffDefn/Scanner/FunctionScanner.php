@@ -2,7 +2,6 @@
 
 namespace DPB\DiffDefn\Scanner;
 
-use DPB\DiffDefn\Definition\DefnDefinition;
 use DPB\DiffDefn\Definition\DefnSourceDefinition;
 use DPB\DiffDefn\Definition\FunctionDefinition;
 

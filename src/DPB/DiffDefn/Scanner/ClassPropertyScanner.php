@@ -5,7 +5,6 @@ namespace DPB\DiffDefn\Scanner;
 use DPB\DiffDefn\Definition\ClassDefinition;
 use DPB\DiffDefn\Definition\ClassPropertyDefinition;
 use DPB\DiffDefn\Definition\AttrDefinition;
-use DPB\DiffDefn\Definition\DefnDefinition;
 use DPB\DiffDefn\Definition\DefnSourceDefinition;
 
 class ClassPropertyScanner extends Scanner
@@ -16,7 +15,7 @@ class ClassPropertyScanner extends Scanner
     {
         if ($node instanceof \PHPParser_Node_Stmt_Class) {
             $this->currClass = $node->namespacedName->toString();
-        } else if ($node instanceof \PHPParser_Node_Stmt_Property && isset($this->currClass)) {
+        } elseif ($node instanceof \PHPParser_Node_Stmt_Property && isset($this->currClass)) {
             $defn = $this->scope
                 ->assert(new ClassDefinition($this->currClass))
                 ->assert(new ClassPropertyDefinition($node->props[0]->name))

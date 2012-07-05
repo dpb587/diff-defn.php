@@ -71,7 +71,7 @@ class DiffShowCommand extends Command
 
         $finalScope = new RootDefinition('root');
         $finalScope->assert($defnRepository)->assert(new DefnDefinition('commit', array('value' => $inputCommitBegin[0], 'friendly' => $inputCommitBegin[1])));
-        
+
         $beginScope = new RootDefinition('root');
         $beginScope->assert($defnRepository)->assert(new DefnDefinition('commit', array('value' => $inputCommitFinal[0], 'friendly' => $inputCommitFinal[1])));
 
@@ -104,9 +104,9 @@ class DiffShowCommand extends Command
                         $file
                     )
                 );
-    
+
                 $output->write('...');
-    
+
                 Processor::process(
                     $beginScope,
                     $repo->getFileContent(
@@ -114,7 +114,7 @@ class DiffShowCommand extends Command
                         $file
                     )
                 );
-    
+
                 $output->writeln('done');
             } catch (\PHPParser_Error $e) {
                 $output->writeln('<error>error</error>');

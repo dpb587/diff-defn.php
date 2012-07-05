@@ -3,7 +3,6 @@
 namespace DPB\DiffDefn\Scanner;
 
 use DPB\DiffDefn\Definition\InterfaceDefinition;
-use DPB\DiffDefn\Definition\DefnDefinition;
 use DPB\DiffDefn\Definition\DefnSourceDefinition;
 
 class InterfaceScanner extends Scanner

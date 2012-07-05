@@ -3,7 +3,6 @@
 namespace DPB\DiffDefn\Scanner;
 
 use DPB\DiffDefn\Definition\AttrDefinition;
-use DPB\DiffDefn\Definition\ClassDefinition;
 use DPB\DiffDefn\Definition\FunctionDefinition;
 use DPB\DiffDefn\Definition\FunctionParamDefinition;
 

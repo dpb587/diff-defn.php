@@ -3,7 +3,6 @@
 namespace DPB\DiffDefn\Scanner;
 
 use DPB\DiffDefn\Definition\ConstDefinition;
-use DPB\DiffDefn\Definition\DefnDefinition;
 use DPB\DiffDefn\Definition\DefnSourceDefinition;
 
 class ConstScanner extends Scanner

@@ -5,10 +5,8 @@ namespace DPB\DiffDefn\Scanner;
 use DPB\DiffDefn\Definition\AttrDefinition;
 use DPB\DiffDefn\Definition\ClassDefinition;
 use DPB\DiffDefn\Definition\ConstDefinition;
-use DPB\DiffDefn\Definition\DefnDefinition;
 use DPB\DiffDefn\Definition\DefnSourceDefinition;
 use DPB\DiffDefn\Definition\Definition;
-use DPB\DiffDefn\Definition\FunctionDefinition;
 
 class ClassConstScanner extends Scanner
 {

@@ -4,8 +4,6 @@ namespace DPB\DiffDefn\Scanner;
 
 use DPB\DiffDefn\Definition\ClassDefinition;
 use DPB\DiffDefn\Definition\ClassExtendsDefinition;
-use DPB\DiffDefn\Definition\DefnDefinition;
-use DPB\DiffDefn\Definition\DefnSourceDefinition;
 
 class ClassExtendsScanner extends Scanner
 {

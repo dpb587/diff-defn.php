@@ -6,7 +6,7 @@ use DPB\DiffDefn\Definition\Definition;
 
 class Processor
 {
-    static public function process(Definition $scope, $code)
+    public static function process(Definition $scope, $code)
     {
         $parser = new \PHPParser_Parser(new \PHPParser_Lexer());
 
