@@ -29,8 +29,8 @@ class ClassFunctionParamScanner extends Scanner
                 $attr = $defn->assert(new AttrDefinition('default'));
 
                 if ($node->default instanceof \PHPParser_Node_Scalar) {
-                    $attr->setAttribute('type', 'string');
-                    $attr->setAttribute('value', $node->default->value);
+                    $attr->setAttribute('type', 'literal');
+                    $attr->setAttribute('value', json_encode($node->default->value));
                 } elseif ($node->default instanceof \PHPParser_Node_Expr_ConstFetch) {
                     $attr->setAttribute('type', 'const');
                     $attr->setAttribute('value', implode('', $node->default->name->parts)); // @todo correct?
@@ -42,7 +42,7 @@ class ClassFunctionParamScanner extends Scanner
                     $attr->setAttribute('value', json_encode($node->default->items));
                 } elseif ($node->default instanceof \PHPParser_Node_Expr_UnaryMinus) {
                     $attr->setAttribute('type', 'literal');
-                    $attr->setAttribute('value', $node->default->expr->value);
+                    $attr->setAttribute('value', json_encode($node->default->expr->value));
                 } else {
                     die(print_r($node->default, true));
                     throw new \LogicException('unhandled');
