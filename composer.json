@@ -1,4 +1,8 @@
 {
+    "name" : "dpb587/diff-defn.php",
+    "type" : "library",
+    "description" : "A tool for comparing application definitions",
+    "license" : "MIT",
     "authors" : [
         {
             "name" : "Danny Berger",
@@ -15,5 +19,8 @@
         "psr-0" : {
             "DPB\\DiffDefn" : "src/"
         }
-    }
+    },
+    "bin" : [
+        "bin/diff-defn.php"
+    ]
 }
