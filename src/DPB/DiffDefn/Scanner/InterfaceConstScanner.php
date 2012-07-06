@@ -2,7 +2,7 @@
 
 namespace DPB\DiffDefn\Scanner;
 
-use DPB\DiffDefn\Definition\AttrDefinition;
+use DPB\DiffDefn\Definition\DefnAttrDefinition;
 use DPB\DiffDefn\Definition\InterfaceDefinition;
 use DPB\DiffDefn\Definition\ConstDefinition;
 use DPB\DiffDefn\Definition\DefnSourceDefinition;
@@ -30,7 +30,7 @@ class InterfaceConstScanner extends Scanner
 
             $source->setAttribute('line', $node->consts[0]->getAttribute('startLine'));
 
-            $attr = $defn->assert(new AttrDefinition('visibility'));
+            $attr = $defn->assert(new DefnAttrDefinition('visibility'));
 
             if ($node->consts[0]->type & \PHPParser_Node_Stmt_Class::MODIFIER_PUBLIC) {
                 $attr->setAttribute('value', 'public');

@@ -2,7 +2,7 @@
 
 namespace DPB\DiffDefn\Scanner;
 
-use DPB\DiffDefn\Definition\AttrDefinition;
+use DPB\DiffDefn\Definition\DefnAttrDefinition;
 use DPB\DiffDefn\Definition\ClassDefinition;
 use DPB\DiffDefn\Definition\FunctionDefinition;
 use DPB\DiffDefn\Definition\FunctionParamDefinition;
@@ -26,7 +26,7 @@ class ClassFunctionParamScanner extends Scanner
             ;
 
             if ($node->default) {
-                $attr = $defn->assert(new AttrDefinition('default'));
+                $attr = $defn->assert(new DefnAttrDefinition('default'));
 
                 if ($node->default instanceof \PHPParser_Node_Scalar) {
                     $attr->setAttribute('type', 'literal');
@@ -50,7 +50,7 @@ class ClassFunctionParamScanner extends Scanner
             }
 
             if ($node->type) {
-                $attr = $defn->assert(new AttrDefinition('typehint'));
+                $attr = $defn->assert(new DefnAttrDefinition('typehint'));
                 $attr->setAttribute('value', (string) $node->type);
             }
         }

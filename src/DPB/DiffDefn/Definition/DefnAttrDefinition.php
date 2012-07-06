@@ -2,6 +2,6 @@
 
 namespace DPB\DiffDefn\Definition;
 
-class DiffNewDefinition extends Definition
+class DefnAttrDefinition extends Definition
 {
 }

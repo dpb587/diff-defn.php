@@ -608,11 +608,11 @@
                 </xsl:choose>
             </code>
 
-            <xsl:variable name="c_attr" select="count(attr)" />
+            <xsl:variable name="c_attr" select="count(defn-attr)" />
     
             <xsl:if test="$c_attr">
                 &#8211;
-                <xsl:for-each select="attr">
+                <xsl:for-each select="defn-attr">
                     <xsl:if test="position() &gt; 1">, </xsl:if>
                     <xsl:apply-templates select="." />
                 </xsl:for-each>
@@ -643,9 +643,9 @@
             </i>
             <code><xsl:value-of select="@id" /></code>
 
-            <xsl:if test="count(attr[@diff = 'changed'])">
+            <xsl:if test="count(defn-attr[@diff = 'changed'])">
                 &#8211;
-                <xsl:apply-templates select="attr[@diff = 'changed']" />
+                <xsl:apply-templates select="defn-attr[@diff = 'changed']" />
             </xsl:if>
         </dt>
     </xsl:template>
@@ -672,11 +672,11 @@
                 </xsl:choose>
             </code>
 
-            <xsl:variable name="c_attr" select="count(attr)" />
+            <xsl:variable name="c_attr" select="count(defn-attr)" />
     
             <xsl:if test="$c_attr">
                 &#8211;
-                <xsl:for-each select="attr">
+                <xsl:for-each select="defn-attr">
                     <xsl:if test="position() &gt; 1">, </xsl:if>
                     <xsl:apply-templates select="." />
                 </xsl:for-each>
@@ -700,7 +700,7 @@
             </xsl:choose>
         </xsl:variable>
 
-        <xsl:variable name="c_attr" select="count(attr)" />
+        <xsl:variable name="c_attr" select="count(defn-attr)" />
 
         <xsl:variable name="c_extends" select="count(class-extends)" />
         <xsl:variable name="c_extends_deleted" select="count(class-extends[@diff = 'deleted'])" />
@@ -766,7 +766,7 @@
         <xsl:if test="$c_attr">
             <dd class="dd-more">
                 <xsl:attribute name="style"><xsl:value-of select="$v_more_style" /></xsl:attribute>
-                <xsl:apply-templates select="attr" />
+                <xsl:apply-templates select="defn-attr" />
             </dd>
         </xsl:if>
 
@@ -967,9 +967,9 @@
         </xsl:if>
     </xsl:template>
 
-    <xsl:template match="attr[@diff = 'changed']">
+    <xsl:template match="defn-attr[@diff = 'changed']">
         <xsl:choose>
-            <xsl:when test="(@value = 'true' or @value = 'false') and (diff-old/attr/@value = 'true' or diff-old/attr/@value = 'false')">
+            <xsl:when test="(@value = 'true' or @value = 'false') and (diff-old/defn-attr/@value = 'true' or diff-old/attr/@value = 'false')">
                 <xsl:choose>
                     <xsl:when test="@value = 'true'">
                         now
@@ -986,13 +986,13 @@
                 <code><xsl:value-of select="@value" /></code>
                 <span style="opacity:0.6;">
                     (was
-                    <code><xsl:value-of select="diff-old/attr/@value" /></code>)
+                    <code><xsl:value-of select="diff-old/defn-attr/@value" /></code>)
                 </span>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
 
-    <xsl:template match="attr">
+    <xsl:template match="defn-attr">
         <xsl:choose>
             <xsl:when test="@value = 'true'">
                 <code><xsl:value-of select="@id" /></code>

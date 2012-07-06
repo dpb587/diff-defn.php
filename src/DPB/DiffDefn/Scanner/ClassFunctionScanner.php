@@ -2,7 +2,7 @@
 
 namespace DPB\DiffDefn\Scanner;
 
-use DPB\DiffDefn\Definition\AttrDefinition;
+use DPB\DiffDefn\Definition\DefnAttrDefinition;
 use DPB\DiffDefn\Definition\ClassDefinition;
 use DPB\DiffDefn\Definition\DefnSourceDefinition;
 use DPB\DiffDefn\Definition\Definition;
@@ -30,7 +30,7 @@ class ClassFunctionScanner extends Scanner
 
             $source->setAttribute('line', $node->getAttribute('startLine'));
 
-            $attr = $defn->assert(new AttrDefinition('visibility'));
+            $attr = $defn->assert(new DefnAttrDefinition('visibility'));
 
             if ($node->type & \PHPParser_Node_Stmt_Class::MODIFIER_PUBLIC) {
                 $attr->setAttribute('value', 'public');
@@ -41,15 +41,15 @@ class ClassFunctionScanner extends Scanner
             }
 
             if ($node->type & \PHPParser_Node_Stmt_Class::MODIFIER_FINAL) {
-                $defn->assert(new AttrDefinition('final'))->setAttribute('value', true);
+                $defn->assert(new DefnAttrDefinition('final'))->setAttribute('value', true);
             }
 
             if ($node->type & \PHPParser_Node_Stmt_Class::MODIFIER_STATIC) {
-                $defn->assert(new AttrDefinition('static'))->setAttribute('value', true);
+                $defn->assert(new DefnAttrDefinition('static'))->setAttribute('value', true);
             }
 
             if ($node->type & \PHPParser_Node_Stmt_Class::MODIFIER_ABSTRACT) {
-                $defn->assert(new AttrDefinition('abstract'))->setAttribute('value', true);
+                $defn->assert(new DefnAttrDefinition('abstract'))->setAttribute('value', true);
             }
         }
     }

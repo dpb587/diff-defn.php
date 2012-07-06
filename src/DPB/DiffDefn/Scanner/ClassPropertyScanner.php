@@ -4,7 +4,7 @@ namespace DPB\DiffDefn\Scanner;
 
 use DPB\DiffDefn\Definition\ClassDefinition;
 use DPB\DiffDefn\Definition\ClassPropertyDefinition;
-use DPB\DiffDefn\Definition\AttrDefinition;
+use DPB\DiffDefn\Definition\DefnAttrDefinition;
 use DPB\DiffDefn\Definition\DefnSourceDefinition;
 
 class ClassPropertyScanner extends Scanner
@@ -29,7 +29,7 @@ class ClassPropertyScanner extends Scanner
 
             $source->setAttribute('line', $node->props[0]->getAttribute('startLine'));
 
-            $attr = $defn->assert(new AttrDefinition('visibility'));
+            $attr = $defn->assert(new DefnAttrDefinition('visibility'));
 
             if ($node->type & \PHPParser_Node_Stmt_Class::MODIFIER_PUBLIC) {
                 $attr->setAttribute('value', 'public');
