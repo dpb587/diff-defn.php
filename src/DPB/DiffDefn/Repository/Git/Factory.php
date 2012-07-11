@@ -12,6 +12,8 @@ class Factory
             if (is_dir($url . '/.git')) {
                 return new LocalRepository($url);
             }
+        } elseif ('git://' == substr($url, 0, 6)) {
+            return new RemoteRepository($url);
         }
 
         throw new \InvalidArgumentException(sprintf('No git repository support for "%s".', $url));

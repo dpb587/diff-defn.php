@@ -44,7 +44,15 @@ class LocalRepository
         $p->run();
 
         if ($p->getExitCode()) {
-            throw new \InvalidArgumentException(sprintf('Unable to resolve commit "%s".', $commit));
+            $p = new Process(
+                'git rev-parse remotes/origin/' . escapeshellarg($commit) . '^0',
+                $this->url
+            );
+            $p->run();
+
+            if ($p->getExitCode()) {
+                throw new \InvalidArgumentException(sprintf('Unable to resolve commit "%s".', $commit));
+            }
         }
 
         $absolute = trim($p->getOutput());

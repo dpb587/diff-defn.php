@@ -69,11 +69,11 @@ class DiffShowCommand extends Command
 
         $defnRepository = new DefnDefinition('source', $attrs);
 
-        $finalScope = new RootDefinition('root');
-        $finalScope->assert($defnRepository)->assert(new DefnDefinition('commit', array('value' => $inputCommitBegin[0], 'friendly' => $inputCommitBegin[1])));
-
         $beginScope = new RootDefinition('root');
-        $beginScope->assert($defnRepository)->assert(new DefnDefinition('commit', array('value' => $inputCommitFinal[0], 'friendly' => $inputCommitFinal[1])));
+        $beginScope->assert($defnRepository)->assert(new DefnDefinition('commit', array('value' => $inputCommitBegin[0], 'friendly' => $inputCommitBegin[1])));
+
+        $finalScope = new RootDefinition('root');
+        $finalScope->assert($defnRepository)->assert(new DefnDefinition('commit', array('value' => $inputCommitFinal[0], 'friendly' => $inputCommitFinal[1])));
 
         foreach ($diffs as $file) {
             $finalScope->setAttribute('file', $file);

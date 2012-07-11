@@ -5,9 +5,9 @@
             <head>
                 <title>
                     Comparing
-                    <xsl:value-of select="/root/defn[@id = 'source']/defn[@id = 'commit']/diff-old/defn[@id = 'commit']/@friendly" />
-                    &#8230;
-                    <xsl:value-of select="/root/defn[@id = 'source']/defn[@id = 'commit']/@friendly" />
+                    <xsl:value-of select="/root/defn[@id = 'source']/defn[@id = 'commit']/diff-old/defn[@id = 'commit']/@friendly" /><!--
+                    -->&#8230;<!--
+                    --><xsl:value-of select="/root/defn[@id = 'source']/defn[@id = 'commit']/@friendly" />
                     &#8213;
                     <xsl:value-of select="/root/defn[@id = 'source']/@repository" />
                 </title>
