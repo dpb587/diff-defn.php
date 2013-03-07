@@ -5,7 +5,7 @@ Version control systems provide great insight into files and lines that change o
 piece is how application definitions change (e.g. classes, interfaces, and functions) - especially when libraries are
 used as third-party dependencies.
 
-I wrote a post describing a bit of how it works at [dpb587.me](/blog/2013/03/07/comparing-php-application-definitions.html).
+I wrote a post describing a bit of how it works at [dpb587.me](http://dpb587.me/blog/2013/03/07/comparing-php-application-definitions.html).
 
 
 Setup
