@@ -36,52 +36,16 @@ class Repository
 
     public function getFileLink()
     {
-        $p = new Process(
-            'git remote -v',
-            $this->url
-        );
-        $p->run();
-
-        preg_match('#^origin\s+(.*)\s+\(fetch\)#', $p->getOutput(), $match);
-
-        if ($match) {
-            if (preg_match('#(git|ssh)://github.com/([^/]+/[^/]+)#', $match[1], $match)) {
-                return 'https://github.com/' . preg_replace('#\.git$#', '', $match[2]) . '/blob/%commit%/%file%#L%line%';
-            }
-        }
+        // nop
     }
 
     public function getCommitLink($repository)
     {
-        $p = new Process(
-            'git remote -v',
-            $this->url
-        );
-        $p->run();
-
-        preg_match('#^origin\s+(.*)\s+\(fetch\)#', $p->getOutput(), $match);
-
-        if ($match) {
-            if (preg_match('#(git|ssh)://github.com/([^/]+/[^/]+)#', $match[1], $match)) {
-                return 'https://github.com/' . preg_replace('#\.git$#', '', $match[2]) . '/tree/%commit%';
-            }
-        }
+        // nop
     }
 
     public function getLink($repository)
     {
-        $p = new Process(
-            'git remote -v',
-            $this->url
-        );
-        $p->run();
-
-        preg_match('#^origin\s+(.*)\s+\(fetch\)#', $p->getOutput(), $match);
-
-        if ($match) {
-            if (preg_match('#(git|ssh)://github.com/([^/]+/[^/]+)#', $match[1], $match)) {
-                return 'https://github.com/' . preg_replace('#\.git$#', '', $match[2]) . '/';
-            }
-        }
+        // nop
     }
 }
