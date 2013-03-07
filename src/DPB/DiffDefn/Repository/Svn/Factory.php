@@ -25,6 +25,6 @@ class Factory
             }
         }
 
-        throw new \InvalidArgumentException(sprintf('No git repository support for "%s".', $url));
+        throw new \InvalidArgumentException(sprintf('No svn repository support for "%s".', $url));
     }
 }

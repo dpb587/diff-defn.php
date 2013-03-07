@@ -36,7 +36,10 @@ class DefinitionComparator
                 if ($sub) {
                     if ($sub->hasAttribute('diff')) {
                         $bc = clone $b->get($sub);
-                        $sub->assert(new DiffOldDefinition('old'))->assert($bc);
+
+                        if ('touched' != $sub->getAttribute('diff')) {
+                            $sub->assert(new DiffOldDefinition('old'))->assert($bc);
+                        }
 
                         $c->setAttribute('diff', 'touched');
                     }

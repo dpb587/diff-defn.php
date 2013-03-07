@@ -11,9 +11,9 @@
     ],
     "require" : {
         "nikic/php-parser" : "dev-master",
-        "symfony/console" : "dev-master",
-        "symfony/process" : "dev-master",
-        "symfony/yaml" : "dev-master"
+        "symfony/console" : "2.2.*",
+        "symfony/process" : "2.2.*",
+        "symfony/yaml" : "2.2.*"
     },
     "autoload" : {
         "psr-0" : {

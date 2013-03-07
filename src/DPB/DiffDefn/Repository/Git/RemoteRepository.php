@@ -23,7 +23,7 @@ class RemoteRepository extends LocalRepository
     protected function requireLocal()
     {
         if (!is_dir($this->url)) {
-            $p = new Process('git clone -n ' . escapeshellarg($this->urlraw) . ' ' . $this->url);
+            $p = new Process('git clone -n ' . escapeshellarg($this->urlraw) . ' ' . $this->url, null, null, null, 600);
             $p->run();
         }
     }
